@@ -1,0 +1,31 @@
+/* DRUVE — tipografia
+   Space Grotesk (display/UI) + JetBrains Mono (labels técnicos).
+   Substituição sinalizada: a marca DRUVE é lettering customizado; não existe
+   webfont equivalente. Space Grotesk é o parente mais próximo em Google Fonts. */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* escala display — sempre tracking negativo e peso 500/600, nunca 700+ */
+  --text-hero: 64px;      --text-hero-lh: 1.02;   --text-hero-ls: -0.04em;
+  --text-h1: 44px;        --text-h1-lh: 1.06;     --text-h1-ls: -0.035em;
+  --text-h2: 32px;        --text-h2-lh: 1.1;      --text-h2-ls: -0.03em;
+  --text-h3: 22px;        --text-h3-lh: 1.2;      --text-h3-ls: -0.02em;
+
+  /* corpo */
+  --text-lg: 17px;        --text-lg-lh: 1.5;
+  --text-md: 15px;        --text-md-lh: 1.55;
+  --text-sm: 13px;        --text-sm-lh: 1.5;
+
+  /* eyebrow / label: mono, caixa alta, tracking largo — motivo central da marca */
+  --text-label: 10.5px;   --text-label-ls: 0.22em;
+  --text-micro: 9.5px;    --text-micro-ls: 0.18em;
+
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+}

@@ -1,0 +1,20 @@
+/* DRUVE — espaço, raio, layout
+   Sistema de 4px. Raios curtos: sobriedade vem de cantos quase retos.
+   Pílulas (999px) só em badges e no botão-comprimido de ação. */
+:root {
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --space-12: 48px; --space-16: 64px; --space-20: 80px; --space-28: 112px;
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 999px;
+
+  --border-hair: 1px;
+
+  --container-max: 1240px;
+  --gutter: clamp(20px, 4vw, 56px);
+  --section-y: clamp(72px, 12vh, 140px);
+}

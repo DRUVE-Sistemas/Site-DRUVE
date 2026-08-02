@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+<title>DRUVE — Sistemas de gestão: iGenda, MesaFlow e IPorte</title>
+<meta name="description" content="A DRUVE desenvolve três sistemas de gestão independentes: iGenda (agendamento e PDV), MesaFlow (food service) e IPorte (financeiro no navegador e no app). Contagem/MG." />
+<meta name="robots" content="index, follow, max-image-preview:large" />
+<meta name="theme-color" content="#04060D" />
+<link rel="canonical" href="https://druve.com.br/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="DRUVE" />
+<meta property="og:locale" content="pt_BR" />
+<meta property="og:url" content="https://druve.com.br/" />
+<meta property="og:title" content="DRUVE — Sistemas de gestão: iGenda, MesaFlow e IPorte" />
+<meta property="og:description" content="Três sistemas independentes de gestão: agendamento e PDV, food service e financeiro. Você contrata só o que a sua operação precisa." />
+<meta property="og:image" content="https://druve.com.br/design-system/assets/druve-lockup.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://druve.com.br/#org",
+      "name": "DRUVE",
+      "description": "Desenvolvimento de software e sistemas de gestão.",
+      "url": "https://druve.com.br/",
+      "telephone": "+55-31-98361-6906",
+      "address": { "@type": "PostalAddress", "streetAddress": "Rua Bragança, 60 - Santa Cruz Industrial", "addressLocality": "Contagem", "addressRegion": "MG", "addressCountry": "BR" }
+    },
+    { "@type": "WebSite", "@id": "https://druve.com.br/#site", "url": "https://druve.com.br/", "name": "DRUVE", "inLanguage": "pt-BR", "publisher": { "@id": "https://druve.com.br/#org" } },
+    { "@type": "SoftwareApplication", "name": "iGenda", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "description": "Agendamento online e PDV para negócios que vendem tempo: barbearias, salões, clínicas, pet shops e estúdios.", "url": "https://igenda.druve.com.br", "publisher": { "@id": "https://druve.com.br/#org" } },
+    { "@type": "SoftwareApplication", "name": "MesaFlow", "applicationCategory": "BusinessApplication", "operatingSystem": "Web", "description": "Cardápio digital, controle de mesas e fechamento de caixa para restaurantes, bares e cafeterias.", "url": "https://mesaflow.druve.com.br", "publisher": { "@id": "https://druve.com.br/#org" } },
+    { "@type": "SoftwareApplication", "name": "IPorte", "applicationCategory": "FinanceApplication", "operatingSystem": "Web, iOS, Android", "description": "Gestão financeira com app para iOS e Android além do navegador.", "url": "https://iporte.druve.com.br", "publisher": { "@id": "https://druve.com.br/#org" } }
+  ]
+}
+</script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9"
+  }
+}
+</script>
+<style>
+  html, body { margin: 0; padding: 0; background: #04060D; }
+  body { -webkit-font-smoothing: antialiased; }
+  a { color: #E8EAEE; text-decoration: none; }
+  a:hover { color: #7BA5EE; }
+  ::selection { background: #2F62C4; color: #ffffff; }
+  @keyframes druveHint { 0%,100% { transform: translateY(0); opacity: .5 } 50% { transform: translateY(7px); opacity: 1 } }
+  @keyframes druveFloat { 0%,100% { transform: translate3d(0,0,0) } 50% { transform: translate3d(0,-26px,0) } }
+  @keyframes druveSpin { to { transform: rotate(360deg) } }
+</style>
+</helmet>
+
+<div style="position: relative; background: #04060D; color: #E8EAEE; font-family: 'Space Grotesk', system-ui, sans-serif; overflow-x: clip">
+
+  <div style="position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden">
+    <div style="position: absolute; inset: 0; background: radial-gradient(120% 82% at 50% -12%, #141C33 0%, #0A0E1B 46%, #04060D 80%)"></div>
+    <div style="position: absolute; inset: -10% -10% 0 -10%; background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 74px 74px; -webkit-mask-image: radial-gradient(100% 65% at 50% 0%, #000 0%, transparent 72%); mask-image: radial-gradient(100% 65% at 50% 0%, #000 0%, transparent 72%)"></div>
+    <div style="position: absolute; top: -20vh; left: -8vw; width: 48vw; height: 48vw; border-radius: 999px; background: radial-gradient(circle, rgba(47,98,196,0.16), rgba(47,98,196,0) 70%); filter: blur(30px); animation: druveFloat 19s ease-in-out infinite"></div>
+    <div style="position: absolute; top: 26vh; right: -14vw; width: 40vw; height: 40vw; border-radius: 999px; background: radial-gradient(circle, rgba(207,211,218,0.07), rgba(207,211,218,0) 70%); filter: blur(34px); animation: druveFloat 25s ease-in-out infinite reverse"></div>
+    <canvas ref="{{ canvasRef }}" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block"></canvas>
+    <div style="position: absolute; inset: 0; background: radial-gradient(80% 55% at 50% 108%, rgba(4,6,13,0.9), rgba(4,6,13,0) 70%)"></div>
+  </div>
+
+  <div ref="{{ overlayRef }}" style="position: fixed; top: 0; left: 0; right: 0; height: 100vh; z-index: 20; pointer-events: none">
+  <header style="position: absolute; top: 0; left: 0; right: 0; pointer-events: auto; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 18px clamp(18px, 4vw, 56px); background: linear-gradient(180deg, rgba(4,6,13,0.82), rgba(4,6,13,0)); backdrop-filter: blur(10px)">
+    <a href="#s0" aria-label="DRUVE — início" style="display: flex; align-items: center; gap: 13px">
+      <span role="img" aria-label="DRUVE" style="display: block; width: 104px; aspect-ratio: 1600 / 328; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-mask-image: url('./design-system/assets/druve-wordmark.svg'); mask-image: url('./design-system/assets/druve-wordmark.svg'); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain"></span>
+      <span style="width: 1px; height: 20px; background: rgba(255,255,255,0.14)"></span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: 0.22em; color: #7A7B7F; text-transform: uppercase">Sistemas</span>
+    </a>
+    <nav style="display: flex; align-items: center; gap: clamp(10px, 1.9vw, 26px); font-size: 13px; color: #A7A8AC">
+      <div data-navlinks style="display: flex; align-items: center; gap: clamp(10px, 1.9vw, 26px)">
+        <a href="#s1" style="color: #A7A8AC" style-hover="color: #E8EAEE">iGenda</a>
+        <a href="#s2" style="color: #A7A8AC" style-hover="color: #E8EAEE">MesaFlow</a>
+        <a href="#s3" style="color: #A7A8AC" style-hover="color: #E8EAEE">IPorte</a>
+        <a href="#recursos" style="color: #A7A8AC" style-hover="color: #E8EAEE">Recursos</a>
+        <a href="#faq" style="color: #A7A8AC" style-hover="color: #E8EAEE">Dúvidas</a>
+      </div>
+      <a href="#contato" style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 4px; border: 1px solid rgba(207,211,218,0.35); background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 8px 20px -12px rgba(0,0,0,0.8); color: #070A14; font-weight: 600; font-size: 12.5px; letter-spacing: -0.01em" style-hover="filter: brightness(1.05)"><span data-cta-long>Falar com especialista</span><span data-cta-short style="display: none">Especialista</span></a>
+    </nav>
+  </header>
+
+  <div ref="{{ counterRef }}" style="position: absolute; left: clamp(18px, 4vw, 56px); bottom: 24px; display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.16em; color: #7A7B7F">
+      <span ref="{{ numRef }}" style="color: #7BA5EE">01</span>
+      <span style="width: 34px; height: 1px; background: #3A3D45"></span>
+      <span>06</span>
+    </div>
+  </div>
+
+  <div ref="{{ diveRef }}" style="position: fixed; inset: 0; z-index: 90; opacity: 0; pointer-events: none; background: #04060D; display: flex; align-items: center; justify-content: center">
+    <div ref="{{ diveGlowRef }}" style="position: absolute; inset: 0; background: radial-gradient(58% 44% at 50% 50%, rgba(47,98,196,0.5), rgba(4,6,13,0) 74%)"></div>
+    <div style="position: relative; display: flex; align-items: center; gap: 11px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; color: #CDCED0; text-transform: uppercase">
+      <span style="width: 12px; height: 12px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,0.2); border-top-color: #FFFFFF; animation: druveSpin .8s linear infinite"></span>
+      <span ref="{{ diveLabelRef }}">Abrindo</span>
+    </div>
+  </div>
+
+  <section id="s0" data-sec="0" data-screen-label="Hero" style="position: relative; z-index: 2; height: 100vh; display: flex; align-items: center; padding: 0 clamp(18px, 4vw, 56px)">
+    <div data-panel="left" style="max-width: min(700px, 100%); display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 22px)">
+      <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #8A8D93; text-transform: uppercase; align-self: flex-start">
+        <span style="width: 26px; height: 1px; background: linear-gradient(90deg, rgba(207,211,218,0.6), rgba(207,211,218,0))"></span>
+        <span>Desenvolvimento de software · Contagem/MG</span>
+      </div>
+      <h1 style="margin: 0; font-size: clamp(31px, min(6.4vw, 9vh), 78px); line-height: 0.98; letter-spacing: -0.042em; font-weight: 500; text-wrap: balance">
+        <span style="background-image: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-background-clip: text; background-clip: text; color: transparent">Sistemas de gestão</span><br />que fazem o negócio girar
+      </h1>
+      <p style="margin: 0; max-width: 470px; font-size: clamp(14px, min(1.25vw, 2.1vh), 17px); line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Agenda, mesa e financeiro em três produtos separados: iGenda, MesaFlow e IPorte. Você contrata só o que a sua operação precisa.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px">
+        <a href="#contato" style="display: flex; align-items: center; gap: 14px; padding: 6px 8px 6px 22px; border-radius: 4px; border: 1px solid rgba(207,211,218,0.35); background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 26px -14px rgba(0,0,0,0.8); color: #070A14; font-weight: 600; font-size: 13.5px; letter-spacing: -0.01em; transition: filter 140ms cubic-bezier(.22,.61,.36,1)" style-hover="filter: brightness(1.05)">
+          Agendar demonstração
+          <span style="display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 3px; background: rgba(7,10,20,0.14); font-size: 14px">↗</span>
+        </a>
+        <a href="#s1" style="display: flex; align-items: center; padding: 14px 24px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.16); color: #E8EAEE; font-weight: 500; font-size: 13.5px; letter-spacing: -0.01em; background: rgba(255,255,255,0.028); transition: background 140ms cubic-bezier(.22,.61,.36,1)" style-hover="background: rgba(255,255,255,0.05)">Ver os sistemas</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; margin-top: 26px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">
+        <span style="animation: druveHint 1.8s ease-in-out infinite">↓</span>
+        <span>Role para explorar</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="s1" data-sec="1" data-screen-label="iGenda" style="position: relative; z-index: 2; height: 265vh; padding: 0 clamp(18px, 4vw, 56px)">
+    <div data-stick style="position: sticky; top: 0; height: 100vh; box-sizing: border-box; padding: min(74px, 9.5vh) 0 min(32px, 4vh); display: flex; align-items: center; justify-content: flex-end">
+      <div data-panel style="width: min(560px, 100%); display: flex; flex-direction: column; gap: clamp(8px, 1.5vh, 14px)">
+        <div style="display: flex; flex-direction: column; gap: clamp(9px, 1.7vh, 16px); padding: clamp(16px, 2.2vh, 30px) clamp(18px, 2.4vw, 30px); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; background: rgba(7,10,20,0.62); backdrop-filter: blur(22px); box-shadow: 0 40px 90px -40px rgba(0,0,0,0.95)">
+          <div style="display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: #7BA5EE; text-transform: uppercase"><span style="width: 22px; height: 1px; background: #2F62C4"></span>Sistema 01 — iGenda</div>
+          <h2 style="margin: 0; font-size: clamp(21px, min(2.9vw, 3.5vh), 40px); line-height: 1.03; letter-spacing: -0.035em; font-weight: 600; text-wrap: balance">Agenda cheia e o caixa fechado no fim do dia.</h2>
+          <p style="margin: 0; font-size: clamp(13px, min(1.06vw, 1.95vh), 15px); line-height: 1.5; color: #A7A8AC; text-wrap: pretty">Sistema de agendamento e PDV para quem vende tempo. O cliente marca sozinho pelo link, o lembrete sai no WhatsApp e a venda entra no caixa sem digitação dupla.</p>
+          <div style="padding-top: clamp(9px, 1.5vh, 14px); border-top: 1px solid rgba(255,255,255,0.08); font-size: 12.5px; color: #7A7B7F">Barbearias · Salões · Clínicas · Pet shops · Estúdios</div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 9px">
+            <a href="https://igenda.druve.com.br" data-enter="1" data-sys="igenda" style="display: flex; align-items: center; gap: 10px; padding: 9px 15px 9px 17px; border-radius: 999px; border: 1px solid rgba(47,98,196,0.34); background: rgba(47,98,196,0.13); color: #CDCED0; font-size: 12.5px; font-weight: 600; letter-spacing: -0.005em; transition: background .25s, color .25s, border-color .25s" style-hover="background: rgba(47,98,196,0.24); border-color: rgba(47,98,196,0.6); color: #FFFFFF">Entrar no iGenda<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">→</span></a>
+            <a href="./igenda.html" data-enter="1" data-mode="detail" data-sys="igenda" style="display: flex; align-items: center; gap: 9px; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.035); color: #B1B2B4; font-size: 12.5px; font-weight: 600; letter-spacing: -0.005em; transition: background .25s, color .25s, border-color .25s" style-hover="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.28); color: #FFFFFF">Saiba mais<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">↗</span></a>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 4px 2px 0">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; color: #7A7B7F; text-transform: uppercase">Funcionalidades</span>
+          <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1); overflow: hidden"><div data-fbar style="height: 100%; width: 0%; background: linear-gradient(90deg, rgba(47,98,196,0.1), #2F62C4)"></div></div>
+          <span data-fcount style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; color: #7BA5EE">01/06</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(7px, 1.2vh, 10px)">
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Agendamento online 24h</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Link próprio da sua marca. O cliente escolhe horário sozinho, sem baixar app.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Lembrete no WhatsApp</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Confirmação automática antes do horário — o índice de falta cai na primeira semana.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">PDV e comanda</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Serviço e produto no mesmo fechamento, com pix, cartão e dinheiro separados.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Comissão por profissional</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Percentual por serviço, calculado a cada atendimento fechado. Sem conferir no fim do mês.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Ficha do cliente</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Histórico, preferências, fotos e retorno sugerido na tela do atendimento.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Fila de espera e encaixe</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Cancelou? O horário vago é oferecido na hora para quem está na fila.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s2" data-sec="2" data-screen-label="MesaFlow" style="position: relative; z-index: 2; height: 265vh; padding: 0 clamp(18px, 4vw, 56px)">
+    <div data-stick style="position: sticky; top: 0; height: 100vh; box-sizing: border-box; padding: min(74px, 9.5vh) 0 min(32px, 4vh); display: flex; align-items: center; justify-content: flex-start">
+      <div data-panel style="width: min(560px, 100%); display: flex; flex-direction: column; gap: clamp(8px, 1.5vh, 14px)">
+        <div style="display: flex; flex-direction: column; gap: clamp(9px, 1.7vh, 16px); padding: clamp(16px, 2.2vh, 30px) clamp(18px, 2.4vw, 30px); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; background: rgba(7,10,20,0.62); backdrop-filter: blur(22px); box-shadow: 0 40px 90px -40px rgba(0,0,0,0.95)">
+          <div style="display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: #4A80E0; text-transform: uppercase"><span style="width: 22px; height: 1px; background: #2F62C4"></span>Sistema 02 — MesaFlow</div>
+          <h2 style="margin: 0; font-size: clamp(21px, min(2.9vw, 3.5vh), 40px); line-height: 1.03; letter-spacing: -0.035em; font-weight: 600; text-wrap: balance">Do cardápio digital ao fechamento da mesa.</h2>
+          <p style="margin: 0; font-size: clamp(13px, min(1.06vw, 1.95vh), 15px); line-height: 1.5; color: #A7A8AC; text-wrap: pretty">Sistema próprio para food service, sem relação com os outros. O pedido nasce na mesa e cai direto na cozinha: sem caderninho, sem grito, sem item esquecido na conta.</p>
+          <div style="padding-top: clamp(9px, 1.5vh, 14px); border-top: 1px solid rgba(255,255,255,0.08); font-size: 12.5px; color: #7A7B7F">Restaurantes · Bares · Cafeterias · Food service</div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 9px">
+            <a href="https://mesaflow.druve.com.br" data-enter="1" data-sys="mesaflow" style="display: flex; align-items: center; gap: 10px; padding: 9px 15px 9px 17px; border-radius: 999px; border: 1px solid rgba(47,98,196,0.34); background: rgba(47,98,196,0.13); color: #CDCED0; font-size: 12.5px; font-weight: 600; letter-spacing: -0.005em; transition: background .25s, color .25s, border-color .25s" style-hover="background: rgba(47,98,196,0.24); border-color: rgba(47,98,196,0.6); color: #FFFFFF">Entrar no MesaFlow<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">→</span></a>
+            <a href="./mesaflow.html" data-enter="1" data-mode="detail" data-sys="mesaflow" style="display: flex; align-items: center; gap: 9px; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.035); color: #B1B2B4; font-size: 12.5px; font-weight: 600; letter-spacing: -0.005em; transition: background .25s, color .25s, border-color .25s" style-hover="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.28); color: #FFFFFF">Saiba mais<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">↗</span></a>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 4px 2px 0">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; color: #7A7B7F; text-transform: uppercase">Funcionalidades</span>
+          <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1); overflow: hidden"><div data-fbar style="height: 100%; width: 0%; background: linear-gradient(90deg, rgba(47,98,196,0.1), #2F62C4)"></div></div>
+          <span data-fcount style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; color: #4A80E0">01/06</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(7px, 1.2vh, 10px)">
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Cardápio digital por QR</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Preço, foto e disponibilidade atualizados na hora — item esgotado sai do ar sozinho.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Comanda por mesa</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Garçom lança no celular e a mesa fica com o consumo aberto em tempo real.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Tela de cozinha (KDS)</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Fila de preparo ordenada por tempo, com aviso de pedido atrasado. Sem papel.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Delivery e balcão</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Retirada, entrega e salão no mesmo caixa, com taxa e endereço no pedido.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Divisão de conta</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Fecha por pessoa, por item ou por mesa, com serviço de 10% opcional.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Controle de insumos</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Ficha técnica dá baixa no estoque a cada prato vendido e avisa o que falta.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s3" data-sec="3" data-screen-label="IPorte" style="position: relative; z-index: 2; height: 265vh; padding: 0 clamp(18px, 4vw, 56px)">
+    <div data-stick style="position: sticky; top: 0; height: 100vh; box-sizing: border-box; padding: min(74px, 9.5vh) 0 min(32px, 4vh); display: flex; align-items: center; justify-content: flex-end">
+      <div data-panel style="width: min(560px, 100%); display: flex; flex-direction: column; gap: clamp(8px, 1.5vh, 14px)">
+        <div style="display: flex; flex-direction: column; gap: clamp(9px, 1.7vh, 16px); padding: clamp(16px, 2.2vh, 30px) clamp(18px, 2.4vw, 30px); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; background: rgba(7,10,20,0.62); backdrop-filter: blur(22px); box-shadow: 0 40px 90px -40px rgba(0,0,0,0.95)">
+          <div style="display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: #4A80E0; text-transform: uppercase"><span style="width: 22px; height: 1px; background: #2F62C4"></span>Sistema 03 — IPorte</div>
+          <h2 style="margin: 0; font-size: clamp(21px, min(2.9vw, 3.5vh), 40px); line-height: 1.03; letter-spacing: -0.035em; font-weight: 600; text-wrap: balance">Seu financeiro no bolso, atualizado hoje.</h2>
+          <p style="margin: 0; font-size: clamp(13px, min(1.06vw, 1.95vh), 15px); line-height: 1.5; color: #A7A8AC; text-wrap: pretty">Produto independente, com app para iOS e Android além do navegador. O IPorte organiza o que entra e o que sai, projeta o mês e avisa antes do aperto — não depois.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; padding-top: clamp(9px, 1.5vh, 14px); border-top: 1px solid rgba(255,255,255,0.08)">
+            <span style="display: flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.1); border: 1px solid rgba(47,98,196,0.28); font-size: 12px; color: #CDCED0">App iOS</span>
+            <span style="display: flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.1); border: 1px solid rgba(47,98,196,0.28); font-size: 12px; color: #CDCED0">App Android</span>
+            <span style="display: flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); font-size: 12px; color: #B1B2B4">Navegador</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 9px">
+            <a href="https://iporte.druve.com.br" data-enter="1" data-sys="iporte" style="display: flex; align-items: center; gap: 10px; padding: 9px 15px 9px 17px; border-radius: 999px; border: 1px solid rgba(47,98,196,0.34); background: rgba(47,98,196,0.13); color: #CDCED0; font-size: 12.5px; font-weight: 600; letter-spacing: -0.005em; transition: background .25s, color .25s, border-color .25s" style-hover="background: rgba(47,98,196,0.24); border-color: rgba(47,98,196,0.6); color: #FFFFFF">Entrar no IPorte<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">→</span></a>
+            <a href="./iporte.html" data-enter="1" data-mode="detail" data-sys="iporte" style="display: flex; align-items: center; gap: 9px; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.035); color: #B1B2B4; font-size: 12.5px; font-weight: 600; letter-spacing: -0.005em; transition: background .25s, color .25s, border-color .25s" style-hover="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.28); color: #FFFFFF">Saiba mais<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">↗</span></a>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 4px 2px 0">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.2em; color: #7A7B7F; text-transform: uppercase">Funcionalidades</span>
+          <div style="flex: 1; height: 1px; background: rgba(255,255,255,0.1); overflow: hidden"><div data-fbar style="height: 100%; width: 0%; background: linear-gradient(90deg, rgba(47,98,196,0.1), #2F62C4)"></div></div>
+          <span data-fcount style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; color: #4A80E0">01/06</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(7px, 1.2vh, 10px)">
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Fluxo de caixa diário</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Entradas, saídas e saldo real do dia na primeira tela do app.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Contas a pagar e receber</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Vencimento, baixa e comprovante anexado pela câmera do celular.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Projeção de 30 dias</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">O saldo do mês que vem antes dele chegar, com cenário otimista e apertado.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Alerta no celular</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Notificação quando o saldo projetado fura a reserva ou uma conta vence hoje.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Conciliação de cartões</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Taxa, prazo e o que caiu de verdade na conta, maquininha por maquininha.</div>
+          </div>
+          <div data-fcard style="display: flex; flex-direction: column; gap: 6px; padding: clamp(10px, 1.6vh, 14px) 15px; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; background: rgba(7,10,20,0.7); backdrop-filter: blur(14px); opacity: 0.06; will-change: opacity, transform">
+            <div style="display: flex; align-items: center; gap: 9px"><span style="width: 5px; height: 5px; border-radius: 999px; background: #2F62C4; box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)"></span><span style="font-size: clamp(12.5px, 1.75vh, 13.5px); font-weight: 600; letter-spacing: -0.015em">Relatório do contador</span></div>
+            <div data-fdesc style="font-size: clamp(11.5px, 1.6vh, 12.5px); line-height: 1.42; color: #8A8D93; text-wrap: pretty">Exportação mensal pronta para enviar, em um toque, sem montar planilha.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s4" data-sec="4" data-screen-label="Uma base" style="position: relative; z-index: 2; height: 195vh; padding: 0 clamp(18px, 4vw, 56px); text-align: center">
+    <div style="position: sticky; top: 0; height: 100vh; box-sizing: border-box; padding: min(74px, 9.5vh) 0 min(24px, 3vh); display: flex; flex-direction: column; align-items: center; justify-content: center">
+    <div style="position: relative; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 32px; width: min(900px, 100%); padding: clamp(22px, 3vh, 52px) clamp(18px, 4vw, 54px); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; background: linear-gradient(160deg, rgba(12,17,33,0.72), rgba(4,6,13,0.72)); backdrop-filter: blur(26px) saturate(125%); box-shadow: 0 50px 110px -40px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.07)">
+      <div data-ring aria-hidden="true" style="position: absolute; inset: -3px; border-radius: 15px; padding: 3px; pointer-events: none; opacity: 0.55; filter: blur(7px); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0)"></div>
+      <div data-ring aria-hidden="true" style="position: absolute; inset: -1px; border-radius: 13px; padding: 1.5px; pointer-events: none; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0)"></div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 16px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Três produtos, três decisões</div>
+        <h2 style="margin: 0; font-size: clamp(25px, min(4vw, 5.4vh), 52px); line-height: 1.04; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Não é um pacote. São três sistemas <em style="font-family: 'Space Grotesk', system-ui, sans-serif; font-style: normal; font-weight: 500; background-image: linear-gradient(94deg, #4A80E0, #7BA5EE); -webkit-background-clip: text; background-clip: text; color: transparent">independentes</em>.</h2>
+        <p style="margin: 0; max-width: 540px; font-size: 15.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">iGenda, MesaFlow e IPorte são produtos separados, com assinatura e cadastro próprios. O que eles têm em comum é quem está por trás: o mesmo time de suporte, falando a sua língua.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 1px; width: 100%; background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; overflow: hidden">
+        <div style="display: flex; flex-direction: column; gap: 7px; padding: 22px 20px; background: rgba(7,10,20,0.7)"><span style="font-size: clamp(24px, 2.6vw, 34px); font-weight: 600; letter-spacing: -0.035em; background-image: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-background-clip: text; background-clip: text; color: transparent">3</span><span style="font-size: 12.5px; color: #7A7B7F">sistemas independentes</span></div>
+        <div style="display: flex; flex-direction: column; gap: 7px; padding: 22px 20px; background: rgba(7,10,20,0.7)"><span style="font-size: clamp(24px, 2.6vw, 34px); font-weight: 600; letter-spacing: -0.035em; background-image: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-background-clip: text; background-clip: text; color: transparent">PDV</span><span style="font-size: 12.5px; color: #7A7B7F">integrado à agenda</span></div>
+        <div style="display: flex; flex-direction: column; gap: 7px; padding: 22px 20px; background: rgba(7,10,20,0.7)"><span style="font-size: clamp(24px, 2.6vw, 34px); font-weight: 600; letter-spacing: -0.035em; background-image: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-background-clip: text; background-clip: text; color: transparent">iOS<span style="font-size: 0.6em; color: #7A7B7F"> + </span>Android</span><span style="font-size: 12.5px; color: #7A7B7F">app do IPorte</span></div>
+        <div style="display: flex; flex-direction: column; gap: 7px; padding: 22px 20px; background: rgba(7,10,20,0.7)"><span style="font-size: clamp(24px, 2.6vw, 34px); font-weight: 600; letter-spacing: -0.035em; background-image: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-background-clip: text; background-clip: text; color: transparent">MG</span><span style="font-size: 12.5px; color: #7A7B7F">desenvolvido em Contagem</span></div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <section id="s5" data-sec="5" data-screen-label="Dentro da tela" style="position: relative; z-index: 2; height: 100vh; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: min(74px, 9.5vh) clamp(18px, 4vw, 56px) min(24px, 3vh); text-align: center">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 18px; max-width: 640px">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Você está dentro</div>
+      <h2 style="margin: 0; font-size: clamp(26px, min(4.2vw, 5.8vh), 56px); line-height: 1.04; letter-spacing: -0.038em; font-weight: 500; text-wrap: balance">É assim que o seu dia <span style="background-image: linear-gradient(94deg, #4A80E0, #7BA5EE); -webkit-background-clip: text; background-clip: text; color: transparent">passa a funcionar</span></h2>
+      <p style="margin: 0; font-size: 15.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Continue rolando: recursos, implantação, quem já usa e como falar com a gente.</p>
+      <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase"><span style="animation: druveHint 1.8s ease-in-out infinite">↓</span><span>Continue</span></div>
+    </div>
+  </section>
+
+  <section id="recursos" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 140px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(34px, 4vw, 54px)">
+      <div data-reveal style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px">
+        <div style="max-width: 620px; display: flex; flex-direction: column; gap: 16px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Por que DRUVE</div>
+          <h2 style="margin: 0; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Feito para operar no aperto do dia a dia — não para a apresentação.</h2>
+        </div>
+        <p style="margin: 0; max-width: 340px; font-size: 15px; line-height: 1.65; color: #A7A8AC; text-wrap: pretty">Nuvem, celular, computador do balcão. Rápido de aprender, difícil de abandonar.</p>
+      </div>
+      <div data-reveal style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 1px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; overflow: hidden; box-shadow: 0 40px 90px -50px rgba(0,0,0,0.9)">
+        <div style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.6vw, 34px); background: linear-gradient(170deg, rgba(10,14,28,0.78), rgba(4,6,13,0.82))">
+          <div style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 6px; border: 1px solid rgba(47,98,196,0.35); background: rgba(47,98,196,0.14)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7BA5EE" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; letter-spacing: -0.02em">Feito para um problema</div>
+          <div style="font-size: 14px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Cada sistema resolve a fundo um tipo de operação, em vez de um pacote genérico que faz tudo pela metade.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.6vw, 34px); background: linear-gradient(170deg, rgba(10,14,28,0.78), rgba(4,6,13,0.82))">
+          <div style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 6px; border: 1px solid rgba(47,98,196,0.35); background: rgba(47,98,196,0.14)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7BA5EE" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; letter-spacing: -0.02em">Rápido de implantar</div>
+          <div style="font-size: 14px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Configuração em até 5 dias, com importação dos seus clientes e produtos.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.6vw, 34px); background: linear-gradient(170deg, rgba(10,14,28,0.78), rgba(4,6,13,0.82))">
+          <div style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 6px; border: 1px solid rgba(47,98,196,0.35); background: rgba(47,98,196,0.14)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7BA5EE" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" /><path d="M9 12l2.2 2.2L15.5 10" /></svg>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; letter-spacing: -0.02em">Seguro e em conformidade</div>
+          <div style="font-size: 14px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Backup diário, acessos por perfil e tratamento de dados alinhado à LGPD.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.6vw, 34px); background: linear-gradient(170deg, rgba(10,14,28,0.78), rgba(4,6,13,0.82))">
+          <div style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 6px; border: 1px solid rgba(47,98,196,0.35); background: rgba(47,98,196,0.14)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7BA5EE" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16" /><path d="M7 19V9m5 10V5m5 14v-7" /></svg>
+          </div>
+          <div style="font-size: 16.5px; font-weight: 600; letter-spacing: -0.02em">Decisão com número</div>
+          <div style="font-size: 14px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Relatórios que respondem o que vender mais, quem produz mais e quando cobrar.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="solucoes" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 130px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(32px, 5vw, 72px); align-items: start">
+      <div data-reveal style="display: flex; flex-direction: column; gap: 20px; position: sticky; top: 110px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Nossas soluções</div>
+        <h2 style="margin: 0; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Três sistemas, <span style="background-image: linear-gradient(94deg, #4A80E0, #7BA5EE); -webkit-background-clip: text; background-clip: text; color: transparent">três problemas</span></h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.65; color: #A7A8AC; text-wrap: pretty">Escolha o que resolve a sua operação hoje. São produtos separados: contratar um não obriga a contratar os outros.</p>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px; font-size: 14px; color: #CDCED0">
+          <div style="display: flex; align-items: center; gap: 10px"><span style="color: #7BA5EE">✓</span>Implantação e treinamento inclusos</div>
+          <div style="display: flex; align-items: center; gap: 10px"><span style="color: #7BA5EE">✓</span>Suporte humano por WhatsApp</div>
+          <div style="display: flex; align-items: center; gap: 10px"><span style="color: #7BA5EE">✓</span>Sem contrato de fidelidade</div>
+          <div style="display: flex; align-items: center; gap: 10px"><span style="color: #7BA5EE">✓</span>Atualizações contínuas sem custo</div>
+        </div>
+        <a href="#contato" style="align-self: flex-start; margin-top: 8px; display: flex; align-items: center; gap: 10px; padding: 13px 22px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.028); font-size: 13px; font-weight: 500; letter-spacing: -0.01em; transition: background 140ms cubic-bezier(.22,.61,.36,1)" style-hover="background: rgba(255,255,255,0.05)">Pedir proposta <span>→</span></a>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <div data-reveal style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.8vw, 34px); border: 1px solid rgba(255,255,255,0.09); border-left: 2px solid #2F62C4; border-radius: 12px; background: linear-gradient(120deg, rgba(47,98,196,0.12), rgba(7,10,20,0.75) 55%); box-shadow: 0 30px 70px -50px rgba(0,0,0,0.9)" style-hover="border-color: rgba(47,98,196,0.45)">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+            <div style="font-size: 21px; font-weight: 600; letter-spacing: -0.03em">iGenda</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7BA5EE; text-transform: uppercase">Agenda + PDV</div>
+          </div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Para negócios que vendem tempo: agendamento online, comissão por profissional e caixa fechado no fim do dia.</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px">
+            <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.14); border: 1px solid rgba(47,98,196,0.3); font-size: 12px; color: #CDCED0">Link de agendamento</span>
+            <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.14); border: 1px solid rgba(47,98,196,0.3); font-size: 12px; color: #CDCED0">Lembrete WhatsApp</span>
+            <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.14); border: 1px solid rgba(47,98,196,0.3); font-size: 12px; color: #CDCED0">Comissões</span>
+          </div>
+        </div>
+        <div data-reveal style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.8vw, 34px); border: 1px solid rgba(255,255,255,0.09); border-left: 2px solid #2F62C4; border-radius: 12px; background: linear-gradient(120deg, rgba(47,98,196,0.10), rgba(7,10,20,0.75) 55%); box-shadow: 0 30px 70px -50px rgba(0,0,0,0.9)" style-hover="border-color: rgba(47,98,196,0.4)">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+            <div style="font-size: 21px; font-weight: 600; letter-spacing: -0.03em">MesaFlow</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #4A80E0; text-transform: uppercase">Salão + cozinha</div>
+          </div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Para quem serve mesa: comanda digital, cozinha em tempo real e delivery no mesmo caixa do salão.</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px">
+            <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.12); border: 1px solid rgba(47,98,196,0.28); font-size: 12px; color: #CDCED0">Cardápio QR</span>
+            <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.12); border: 1px solid rgba(47,98,196,0.28); font-size: 12px; color: #CDCED0">KDS cozinha</span>
+            <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.12); border: 1px solid rgba(47,98,196,0.28); font-size: 12px; color: #CDCED0">Delivery</span>
+          </div>
+        </div>
+        <div data-reveal style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.8vw, 34px); border: 1px solid rgba(255,255,255,0.09); border-left: 2px solid #2F62C4; border-radius: 12px; background: linear-gradient(120deg, rgba(47,98,196,0.10), rgba(7,10,20,0.75) 55%); box-shadow: 0 30px 70px -50px rgba(0,0,0,0.9)" style-hover="border-color: rgba(47,98,196,0.4)">
+          <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
+            <div style="font-size: 21px; font-weight: 600; letter-spacing: -0.03em">IPorte</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #4A80E0; text-transform: uppercase">Financeiro</div>
+          </div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Para quem precisa enxergar o mês: fluxo de caixa automático, projeção e alerta antes do aperto.</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px">
+            <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.10); border: 1px solid rgba(47,98,196,0.28); font-size: 12px; color: #CDCED0">Fluxo de caixa</span>
+            <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.10); border: 1px solid rgba(47,98,196,0.28); font-size: 12px; color: #CDCED0">Projeções</span>
+            <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.10); border: 1px solid rgba(47,98,196,0.28); font-size: 12px; color: #CDCED0">Relatório contábil</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="implantacao" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 130px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(30px, 4vw, 48px)">
+      <div data-reveal style="display: flex; flex-direction: column; gap: 14px; max-width: 620px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Como começa</div>
+        <h2 style="margin: 0; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Do primeiro contato ao sistema rodando em uma semana.</h2>
+      </div>
+      <div data-reveal style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: clamp(16px, 2vw, 24px)">
+        <div style="display: flex; flex-direction: column; gap: 12px; padding: clamp(22px, 2.4vw, 30px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(7,10,20,0.6)">
+          <div style="display: flex; align-items: center; gap: 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #7A7B7F">ETAPA 01</span><span style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(47,98,196,0.6), rgba(47,98,196,0))"></span></div>
+          <div style="font-size: 17px; font-weight: 600; letter-spacing: -0.025em">Diagnóstico de 30 min</div>
+          <div style="font-size: 14px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Entendemos sua operação e mostramos o sistema com a cara do seu negócio — sem apresentação genérica.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; padding: clamp(22px, 2.4vw, 30px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(7,10,20,0.6)">
+          <div style="display: flex; align-items: center; gap: 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #7A7B7F">ETAPA 02</span><span style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(47,98,196,0.6), rgba(47,98,196,0))"></span></div>
+          <div style="font-size: 17px; font-weight: 600; letter-spacing: -0.025em">Implantação assistida</div>
+          <div style="font-size: 14px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Importamos clientes, produtos e serviços, configuramos formas de pagamento e treinamos o time.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; padding: clamp(22px, 2.4vw, 30px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(7,10,20,0.6)">
+          <div style="display: flex; align-items: center; gap: 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #7A7B7F">ETAPA 03</span><span style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(47,98,196,0.6), rgba(47,98,196,0))"></span></div>
+          <div style="font-size: 17px; font-weight: 600; letter-spacing: -0.025em">Acompanhamento</div>
+          <div style="font-size: 14px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Nos primeiros 60 dias revisamos os números com você e ajustamos o que estiver travando.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="vozes" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 130px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(28px, 3.5vw, 44px)">
+      <div data-reveal style="display: flex; flex-direction: column; gap: 14px; max-width: 560px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Quem já usa</div>
+        <h2 style="margin: 0; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Feito para quem atende gente todos os dias.</h2>
+      </div>
+      <div data-reveal style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: clamp(16px, 2vw, 22px)">
+        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 22px; padding: clamp(24px, 2.6vw, 32px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: linear-gradient(165deg, rgba(10,14,28,0.7), rgba(7,10,20,0.72))">
+          <div style="font-size: 15.5px; line-height: 1.65; color: #DEDFE1; text-wrap: pretty">“Cortamos 70% dos furos de agenda. O cliente confirma sozinho e o caixa fecha certo — a gente parou de brigar com planilha.”</div>
+          <div style="display: flex; align-items: center; gap: 12px"><span style="width: 34px; height: 34px; border-radius: 999px; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">RS</span><span style="display: flex; flex-direction: column; font-size: 13px"><span style="font-weight: 600">Rafael Souza</span><span style="color: #7A7B7F">Barbearia Nove · iGenda</span></span></div>
+        </div>
+        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 22px; padding: clamp(24px, 2.6vw, 32px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: linear-gradient(165deg, rgba(10,14,28,0.7), rgba(7,10,20,0.72))">
+          <div style="font-size: 15.5px; line-height: 1.65; color: #DEDFE1; text-wrap: pretty">“A cozinha recebe o pedido no segundo em que sai da mesa. Reduzimos o tempo de entrega do prato em 9 minutos.”</div>
+          <div style="display: flex; align-items: center; gap: 12px"><span style="width: 34px; height: 34px; border-radius: 999px; background: linear-gradient(140deg, #2F62C4, #D9736B); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">CM</span><span style="display: flex; flex-direction: column; font-size: 13px"><span style="font-weight: 600">Carla Moreira</span><span style="color: #7A7B7F">Trattoria Bell · MesaFlow</span></span></div>
+        </div>
+        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 22px; padding: clamp(24px, 2.6vw, 32px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: linear-gradient(165deg, rgba(10,14,28,0.7), rgba(7,10,20,0.72))">
+          <div style="font-size: 15.5px; line-height: 1.65; color: #DEDFE1; text-wrap: pretty">“Pela primeira vez sei o saldo do mês que vem antes de ele chegar. O alerta de caixa já me salvou duas vezes.”</div>
+          <div style="display: flex; align-items: center; gap: 12px"><span style="width: 34px; height: 34px; border-radius: 999px; background: linear-gradient(140deg, #2F62C4, #2F62C4); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">JL</span><span style="display: flex; flex-direction: column; font-size: 13px"><span style="font-weight: 600">Juliana Lima</span><span style="color: #7A7B7F">Clínica Vitalis · IPorte</span></span></div>
+        </div>
+      </div>
+      <div data-reveal style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 6px">
+        <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-size: 13px; color: #B1B2B4">Barbearias</span>
+        <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-size: 13px; color: #B1B2B4">Salões de beleza</span>
+        <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-size: 13px; color: #B1B2B4">Clínicas e consultórios</span>
+        <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-size: 13px; color: #B1B2B4">Pet shops</span>
+        <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-size: 13px; color: #B1B2B4">Restaurantes</span>
+        <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-size: 13px; color: #B1B2B4">Bares e cafeterias</span>
+        <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-size: 13px; color: #B1B2B4">Estúdios e academias</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 130px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(28px, 4vw, 56px)">
+      <div data-reveal style="display: flex; flex-direction: column; gap: 14px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Dúvidas frequentes</div>
+        <h2 style="margin: 0; font-size: clamp(28px, 3.6vw, 44px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">O que todo mundo pergunta antes de assinar.</h2>
+        <p style="margin: 0; max-width: 380px; font-size: 15px; line-height: 1.65; color: #A7A8AC; text-wrap: pretty">Ficou algo de fora? Fale com um especialista — respondemos em minutos, em horário comercial.</p>
+      </div>
+      <div data-reveal style="display: flex; flex-direction: column">
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 22px 0; border-top: 1px solid rgba(255,255,255,0.09)">
+          <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.02em">Preciso contratar os três sistemas?</div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Não. São produtos separados e independentes — você assina apenas o sistema que faz sentido para o seu negócio.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 22px 0; border-top: 1px solid rgba(255,255,255,0.09)">
+          <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.02em">Funciona no celular?</div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">iGenda e MesaFlow rodam no navegador, do computador do balcão ao celular do dono. O IPorte tem app próprio para iOS e Android.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 22px 0; border-top: 1px solid rgba(255,255,255,0.09)">
+          <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.02em">Migro meus dados de outro sistema?</div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Sim. Em qualquer um dos três sistemas importamos clientes, produtos e histórico durante a implantação, sem custo extra.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 22px 0; border-top: 1px solid rgba(255,255,255,0.09)">
+          <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.02em">Existe fidelidade?</div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Nenhuma. Assinatura mensal, cancelamento a qualquer momento e exportação dos seus dados quando quiser.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 22px 0; border-top: 1px solid rgba(255,255,255,0.09); border-bottom: 1px solid rgba(255,255,255,0.09)">
+          <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.02em">Como é o suporte?</div>
+          <div style="font-size: 14.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Gente de verdade no WhatsApp, em horário comercial — quem atende conhece o sistema por dentro.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contato" data-screen-label="Contato" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 130px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(24px, 3vw, 36px)">
+      <div data-reveal style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: clamp(24px, 4vw, 48px); padding: clamp(28px, 4vw, 54px); border: 1px solid rgba(47,98,196,0.28); border-radius: 12px; background: linear-gradient(115deg, rgba(47,98,196,0.22), rgba(47,98,196,0.12) 45%, rgba(7,10,20,0.85)); box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)">
+        <div style="max-width: 560px; display: flex; flex-direction: column; gap: 16px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Pronto para começar?</div>
+          <h2 style="margin: 0; font-size: clamp(28px, 4vw, 50px); line-height: 1.02; letter-spacing: -0.038em; font-weight: 500; text-wrap: balance">Coloque seu negócio no <span style="background-image: linear-gradient(94deg, #7BA5EE, #E8EAEE); -webkit-background-clip: text; background-clip: text; color: transparent">piloto automático</span></h2>
+          <p style="margin: 0; font-size: 15.5px; line-height: 1.6; color: #CDCED0; text-wrap: pretty">30 minutos de conversa, sem compromisso. A gente mostra o sistema rodando com a cara do seu negócio.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; min-width: min(260px, 100%)">
+          <a href="#contato" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-radius: 4px; border: 1px solid rgba(207,211,218,0.35); background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 26px -14px rgba(0,0,0,0.8); color: #070A14; font-weight: 600; font-size: 13.5px; letter-spacing: -0.01em; transition: filter 140ms cubic-bezier(.22,.61,.36,1)" style-hover="filter: brightness(1.05)">Agendar demonstração <span>↗</span></a>
+          <a href="#contato" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.028); color: #E8EAEE; font-weight: 500; font-size: 13.5px; letter-spacing: -0.01em; transition: background 140ms cubic-bezier(.22,.61,.36,1)" style-hover="background: rgba(255,255,255,0.05)">Falar no WhatsApp <span>→</span></a>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.12em; color: #A7A8AC; text-align: center; margin-top: 4px">SEG A SEX, 9H–18H</div>
+        </div>
+      </div>
+
+      <div data-reveal style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 1px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; overflow: hidden">
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 24px; background: rgba(7,10,20,0.7)"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Comercial</span><span style="font-size: 15px; color: #DEDFE1">comercial@druve.com.br</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 24px; background: rgba(7,10,20,0.7)"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Suporte</span><span style="font-size: 15px; color: #DEDFE1">suporte@druve.com.br</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 24px; background: rgba(7,10,20,0.7)"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">WhatsApp</span><a href="https://wa.me/5531983616906" rel="noopener" style="font-size: 15px; color: #DEDFE1" style-hover="color: #FFFFFF">(31) 98361-6906</a></div>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 24px; background: rgba(7,10,20,0.7)"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Onde estamos</span><span style="font-size: 15px; color: #DEDFE1; line-height: 1.45">Contagem/MG<br /><span style="color: #7A7B7F; font-size: 13.5px">Rua Bragança, 60</span></span></div>
+      </div>
+
+      <footer style="display: flex; flex-direction: column; gap: 28px; margin-top: clamp(20px, 3vw, 40px); padding: clamp(28px, 3vw, 40px) 0 44px; border-top: 1px solid rgba(255,255,255,0.08)">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px">
+          <div style="max-width: 300px; display: flex; flex-direction: column; gap: 14px">
+            <div style="display: flex; align-items: center; gap: 11px">
+              <span role="img" aria-label="DRUVE" style="display: block; width: 112px; aspect-ratio: 1600 / 328; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-mask-image: url('./design-system/assets/druve-wordmark.svg'); mask-image: url('./design-system/assets/druve-wordmark.svg'); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: left center; mask-position: left center; -webkit-mask-size: contain; mask-size: contain"></span>
+              <span style="width: 1px; height: 20px; background: rgba(255,255,255,0.14)"></span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: 0.22em; color: #7A7B7F; text-transform: uppercase">Sistemas</span>
+            </div>
+            <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #7A7B7F; text-wrap: pretty">Software de gestão para negócios que atendem gente. iGenda, MesaFlow e IPorte: três sistemas independentes.</p>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13.5px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Sistemas</span>
+            <a href="#s1" style="color: #A7A8AC">iGenda</a>
+            <a href="#s2" style="color: #A7A8AC">MesaFlow</a>
+            <a href="#s3" style="color: #A7A8AC">IPorte</a>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13.5px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Empresa</span>
+            <a href="#recursos" style="color: #A7A8AC">Recursos</a>
+            <a href="#implantacao" style="color: #A7A8AC">Implantação</a>
+            <a href="#vozes" style="color: #A7A8AC">Clientes</a>
+            <a href="#faq" style="color: #A7A8AC">Dúvidas</a>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13.5px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Legal</span>
+            <a href="#contato" style="color: #A7A8AC">Termos de uso</a>
+            <a href="#contato" style="color: #A7A8AC">Privacidade</a>
+            <a href="#contato" style="color: #A7A8AC">LGPD</a>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; font-size: 12.5px; color: #7A7B7F">
+          <span>© 2026 DRUVE Sistemas · Todos os direitos reservados</span>
+          <a href="#s0" style="color: #7A7B7F">Voltar ao topo ↑</a>
+        </div>
+      </footer>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2F62C4&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#2F62C4&quot;,&quot;#2F62C4&quot;,&quot;#2F62C4&quot;,&quot;#2F62C4&quot;],&quot;section&quot;:&quot;Marca&quot;},&quot;igendaUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://igenda.druve.com.br&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Acessar os sistemas&quot;},&quot;mesaflowUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://mesaflow.druve.com.br&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Acessar os sistemas&quot;},&quot;iporteUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://iporte.druve.com.br&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Acessar os sistemas&quot;},&quot;igendaDetailUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;./igenda.html&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Páginas de detalhe&quot;},&quot;mesaflowDetailUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;./mesaflow.html&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Páginas de detalhe&quot;},&quot;iporteDetailUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;./iporte.html&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Páginas de detalhe&quot;},&quot;notebookFinish&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;grafite&quot;,&quot;options&quot;:[&quot;grafite&quot;,&quot;prata&quot;,&quot;preto&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Notebook&quot;},&quot;motionAmount&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.4,&quot;max&quot;:1.6,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Movimento&quot;},&quot;pointerParallax&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Movimento&quot;}}">
+const FINISHES = {
+  grafite: { body: '#33383F', edge: '#4A5158', rough: 0.32, metal: 0.98 },
+  prata:   { body: '#B9BEC4', edge: '#D6DADE', rough: 0.26, metal: 1.0 },
+  preto:   { body: '#15171E', edge: '#2A2E3A', rough: 0.44, metal: 0.88 }
+};
+
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      canvasRef: (el) => { this.canvas = el; },
+      numRef: (el) => { this.num = el; },
+      counterRef: (el) => { this.counter = el; },
+      overlayRef: (el) => { this.overlay = el; },
+      diveRef: (el) => { this.dive = el; },
+      diveGlowRef: (el) => { this.diveGlow = el; },
+      diveLabelRef: (el) => { this.diveLabel = el; }
+    };
+  }
+
+  componentDidMount() {
+    this.cur = null;
+    this.mouse = { x: 0, y: 0 };
+    this.screenIdx = -1;
+    this.onPointer = (e) => {
+      this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      this.mouse.y = (e.clientY / window.innerHeight) * 2 - 1;
+    };
+    window.addEventListener('pointermove', this.onPointer);
+    window.__druve = this;
+    this.initReveal();
+    this.init();
+  }
+
+  componentDidUpdate(prev) {
+    if (!this.mats) return;
+    if (prev.notebookFinish !== this.props.notebookFinish || prev.accentColor !== this.props.accentColor) this.applyLook();
+  }
+
+  componentWillUnmount() {
+    this.dead = true;
+    window.removeEventListener('pointermove', this.onPointer);
+    window.removeEventListener('resize', this.onResize);
+    if (this.io) this.io.disconnect();
+    if (this.ro) this.ro.disconnect();
+    if (this.renderer) this.renderer.dispose();
+  }
+
+  accent() { return this.props.accentColor || '#4A80E0'; }
+  finish() { return FINISHES[this.props.notebookFinish] || FINISHES.grafite; }
+
+  // ---------- scroll reveal for the content sections below the 3D sequence ----------
+  initReveal() {
+    const els = Array.from(document.querySelectorAll('[data-reveal]'));
+    if (!els.length) return;
+    const show = (el) => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    };
+    if (!('IntersectionObserver' in window)) { els.forEach(show); return; }
+    els.forEach((el) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(22px)';
+      el.style.transition = 'opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1)';
+    });
+    this.io = new IntersectionObserver((ents) => {
+      ents.forEach((en) => {
+        if (en.isIntersecting) { show(en.target); this.io.unobserve(en.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+    els.forEach((el) => this.io.observe(el));
+    // safety: nothing stays invisible if the observer never fires
+    setTimeout(() => els.forEach((el) => { if (el.getBoundingClientRect().top < window.innerHeight) show(el); }), 1400);
+  }
+
+  applyLook() {
+    const f = this.finish();
+    this.mats.body.color.set(f.body); this.mats.body.roughness = Math.min(1, f.rough * 1.85); this.mats.body.metalness = f.metal;
+    this.mats.edge.color.set(f.edge); this.mats.edge.roughness = Math.max(0.1, f.rough - 0.18); this.mats.edge.metalness = 1;
+    if (this.mats.grille) { this.mats.grille.color.set(f.body); this.mats.grille.metalness = f.metal; }
+    this.mats.logo.emissive.set('#ffffff');
+    this.mats.logo.emissiveIntensity = 1.3;
+    this.tints[5] = parseInt(this.accent().replace('#', ''), 16);
+    this.paintScreens();
+  }
+
+  // caminho de retângulo arredondado reutilizável (Shape para contorno, Path para furos)
+  rrPath(THREE, Ctor, cx, cy, w, h, r) {
+    const p = new Ctor(), x = cx - w / 2, y = cy - h / 2;
+    r = Math.max(0.00002, Math.min(r, Math.min(w, h) / 2 - 0.000001));
+    p.moveTo(x + r, y);
+    p.lineTo(x + w - r, y); p.quadraticCurveTo(x + w, y, x + w, y + r);
+    p.lineTo(x + w, y + h - r); p.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    p.lineTo(x + r, y + h); p.quadraticCurveTo(x, y + h, x, y + h - r);
+    p.lineTo(x, y + r); p.quadraticCurveTo(x, y, x + r, y);
+    return p;
+  }
+
+  // normais suavizadas com dobra: solda vértices coincidentes e só mescla faces
+  // com ângulo abaixo do limite — some o facetado dos cantos sem borrar as quinas
+  smoothNormals(THREE, g, angleDeg) {
+    const pos = g.attributes.position;
+    if (g.index || pos.count % 3) { g.computeVertexNormals(); return g; }
+    const n = pos.count, faces = n / 3;
+    const fx = new Float32Array(faces), fy = new Float32Array(faces), fz = new Float32Array(faces);
+    const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), ab = new THREE.Vector3(), cb = new THREE.Vector3();
+    for (let f = 0; f < faces; f++) {
+      a.fromBufferAttribute(pos, f * 3); b.fromBufferAttribute(pos, f * 3 + 1); c.fromBufferAttribute(pos, f * 3 + 2);
+      cb.subVectors(c, b); ab.subVectors(a, b); cb.cross(ab);
+      if (cb.lengthSq() > 0) cb.normalize();
+      fx[f] = cb.x; fy[f] = cb.y; fz[f] = cb.z;
+    }
+    const map = new Map(), keys = new Array(n);
+    for (let i = 0; i < n; i++) {
+      const k = Math.round(pos.getX(i) * 2e5) + ',' + Math.round(pos.getY(i) * 2e5) + ',' + Math.round(pos.getZ(i) * 2e5);
+      keys[i] = k;
+      let arr = map.get(k); if (!arr) { arr = []; map.set(k, arr); }
+      arr.push(i);
+    }
+    const lim = Math.cos(angleDeg * Math.PI / 180);
+    const out = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      const f = (i / 3) | 0, arr = map.get(keys[i]);
+      let x = 0, y = 0, z = 0;
+      for (let j = 0; j < arr.length; j++) {
+        const o = (arr[j] / 3) | 0;
+        if (fx[f] * fx[o] + fy[f] * fy[o] + fz[f] * fz[o] >= lim) { x += fx[o]; y += fy[o]; z += fz[o]; }
+      }
+      const l = Math.hypot(x, y, z) || 1;
+      out[i * 3] = x / l; out[i * 3 + 1] = y / l; out[i * 3 + 2] = z / l;
+    }
+    g.setAttribute('normal', new THREE.BufferAttribute(out, 3));
+    return g;
+  }
+
+  // q: 0 = peça pequena (teclas), 1 = carcaça (alta densidade de polígonos)
+  roundedBox(THREE, w, h, d, r, q) {
+    const lo = q === 0;
+    if (!this._geo) this._geo = {};
+    const ck = [w, h, d, r, lo ? 0 : 1].map((v) => Math.round(v * 1e6)).join(':');
+    if (this._geo[ck]) return this._geo[ck];
+    const s = this.rrPath(THREE, THREE.Shape, 0, 0, w, h, r);
+    const bev = Math.min(r * 0.42, d * 0.26);
+    const g = new THREE.ExtrudeGeometry(s, { depth: d - bev * 2, bevelEnabled: true, bevelThickness: bev, bevelSize: bev, bevelSegments: lo ? 4 : 10, curveSegments: lo ? 10 : 34 });
+    g.translate(0, 0, -(d - bev * 2) / 2);
+    this.smoothNormals(THREE, g, 42);
+    this._geo[ck] = g;
+    return g;
+  }
+
+  // halo: a própria silhueta da logo borrada, para a luz sair difusa por trás dela
+  haloTexture(THREE) {
+    if (this._haloTex) return this._haloTex;
+    const cv = document.createElement('canvas'); cv.width = 8; cv.height = 8;
+    this._haloCv = cv;
+    const t = new THREE.CanvasTexture(cv);
+    t.colorSpace = THREE.SRGBColorSpace;
+    this._haloTex = t;
+    this.haloPad = { x: 0.30, y: 0.95 };
+    this.syncHalo();
+    return t;
+  }
+
+  syncHalo() {
+    const cv = this._haloCv, src = this._logoTex && this._logoTex.image;
+    if (!cv || !src || !src.width) return;
+    const W = 512, H = Math.max(8, Math.round(W * src.height / src.width));
+    const px = Math.round(W * this.haloPad.x), py = Math.round(H * this.haloPad.y);
+    cv.width = W + px * 2; cv.height = H + py * 2;
+    const c = cv.getContext('2d');
+    c.clearRect(0, 0, cv.width, cv.height);
+    c.filter = 'blur(' + Math.max(12, Math.round(H * 0.62)) + 'px)';
+    c.globalAlpha = 0.95; c.drawImage(src, px, py, W, H);
+    c.filter = 'blur(' + Math.max(6, Math.round(H * 0.26)) + 'px)';
+    c.globalAlpha = 0.4; c.drawImage(src, px, py, W, H);
+    c.filter = 'none'; c.globalAlpha = 1;
+    // envelope elíptico centrado: garante queda simétrica ao redor da gravação
+    c.globalCompositeOperation = 'destination-in';
+    c.save();
+    c.translate(cv.width / 2, cv.height / 2);
+    c.scale(cv.width / cv.height, 1);
+    const env = c.createRadialGradient(0, 0, 0, 0, 0, cv.height / 2);
+    env.addColorStop(0, 'rgba(0,0,0,1)');
+    env.addColorStop(0.45, 'rgba(0,0,0,0.85)');
+    env.addColorStop(0.78, 'rgba(0,0,0,0.22)');
+    env.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = env;
+    c.fillRect(-cv.width, -cv.height, cv.width * 2, cv.height * 2);
+    c.restore();
+    c.globalCompositeOperation = 'source-over';
+    this._haloTex.needsUpdate = true;
+    if (this.logoHalo && this.logoMesh) this.logoHalo.scale.set(1, this.logoMesh.scale.y, 1);
+  }
+
+  roundedPlane(THREE, w, h, r) {
+    const s = new THREE.Shape(), x = -w / 2, y = -h / 2;
+    s.moveTo(x + r, y);
+    s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
+    s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r);
+    s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y);
+    const g = new THREE.ShapeGeometry(s, 16);
+    const p = g.attributes.position, uv = g.attributes.uv;
+    for (let i = 0; i < p.count; i++) uv.setXY(i, (p.getX(i) + w / 2) / w, (p.getY(i) + h / 2) / h);
+    uv.needsUpdate = true;
+    return g;
+  }
+
+  // ---------- mapas procedurais: alumínio jateado, grade de alto-falante ----------
+  normalFromHeight(THREE, img, S, strength) {
+    const d = img.data;
+    const cv = document.createElement('canvas'); cv.width = cv.height = S;
+    const ctx = cv.getContext('2d');
+    const out = ctx.createImageData(S, S), o = out.data;
+    const at = (x, y) => d[(((y + S) % S) * S + ((x + S) % S)) * 4] / 255;
+    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+      const dx = (at(x + 1, y) - at(x - 1, y)) * strength;
+      const dy = (at(x, y + 1) - at(x, y - 1)) * strength;
+      const l = Math.hypot(-dx, -dy, 1), i = (y * S + x) * 4;
+      o[i] = (-dx / l * 0.5 + 0.5) * 255;
+      o[i + 1] = (-dy / l * 0.5 + 0.5) * 255;
+      o[i + 2] = (1 / l * 0.5 + 0.5) * 255;
+      o[i + 3] = 255;
+    }
+    ctx.putImageData(out, 0, 0);
+    return new THREE.CanvasTexture(cv);
+  }
+
+  metalMaps(THREE) {
+    if (this._mm) return this._mm;
+    const S = 256, cv = document.createElement('canvas'); cv.width = cv.height = S;
+    const c = cv.getContext('2d');
+    const img = c.createImageData(S, S), d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const n = 128 + (Math.random() - 0.5) * 52;
+      d[i] = d[i + 1] = d[i + 2] = n; d[i + 3] = 255;
+    }
+    // leve esfumaçado horizontal: dá a direção de escovação do alumínio
+    for (let y = 0; y < S; y++) for (let x = 1; x < S; x++) {
+      const i = (y * S + x) * 4, p = (y * S + x - 1) * 4;
+      const v = d[i] * 0.62 + d[p] * 0.38;
+      d[i] = d[i + 1] = d[i + 2] = v;
+    }
+    c.putImageData(img, 0, 0);
+    const normal = this.normalFromHeight(THREE, img, S, 3.4);
+    const rough = new THREE.CanvasTexture(cv);
+    [normal, rough].forEach((t) => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(26, 26); });
+    this._mm = { normal: normal, rough: rough };
+    return this._mm;
+  }
+
+  grilleTexture(THREE, rx, ry) {
+    if (!this._grCv) {
+      const S = 64, cv = document.createElement('canvas'); cv.width = cv.height = S;
+      const c = cv.getContext('2d');
+      c.fillStyle = '#F2F3F5'; c.fillRect(0, 0, S, S);
+      for (let gy = 0; gy < 8; gy++) for (let gx = 0; gx < 8; gx++) {
+        const x = gx * 8 + (gy % 2 ? 4 : 0) + 4, y = gy * 8 + 4;
+        const g = c.createRadialGradient(x, y, 0.2, x, y, 3.4);
+        g.addColorStop(0, '#04060D'); g.addColorStop(0.5, '#141C33'); g.addColorStop(0.86, '#7A7B7F'); g.addColorStop(1, 'rgba(242,243,245,0)');
+        c.fillStyle = g; c.beginPath(); c.arc(x, y, 3.4, 0, 7); c.fill();
+      }
+      this._grCv = cv;
+    }
+    const t = new THREE.CanvasTexture(this._grCv);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(rx, ry);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    return t;
+  }
+
+  // ---------- serigrafia das teclas (um único plano acima dos keycaps) ----------
+  legendTexture(THREE, keys, aspect) {
+    const cw = 2048, ch = Math.max(2, Math.round(cw / aspect));
+    const cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
+    const c = cv.getContext('2d');
+    const ink = 'rgba(232,234,238,0.95)', dim = 'rgba(205,206,208,0.78)';
+    const font = (px, w) => (w || 500) + ' ' + px.toFixed(1) + 'px "Space Grotesk", ui-sans-serif, sans-serif';
+    const rrect = (x, y, w, h, r) => { if (c.roundRect) { c.beginPath(); c.roundRect(x, y, w, h, r); } else { c.beginPath(); c.rect(x, y, w, h); } };
+    const tri = (x, y, s, dir) => {
+      c.beginPath();
+      if (dir === 'left') { c.moveTo(x + s, y - s); c.lineTo(x - s * 0.8, y); c.lineTo(x + s, y + s); }
+      else if (dir === 'right') { c.moveTo(x - s, y - s); c.lineTo(x + s * 0.8, y); c.lineTo(x - s, y + s); }
+      else if (dir === 'up') { c.moveTo(x - s, y + s * 0.8); c.lineTo(x, y - s * 0.8); c.lineTo(x + s, y + s * 0.8); }
+      else { c.moveTo(x - s, y - s * 0.8); c.lineTo(x, y + s * 0.8); c.lineTo(x + s, y - s * 0.8); }
+      c.closePath(); c.fill();
+    };
+    const speaker = (x, y, s, waves) => {
+      c.beginPath(); c.moveTo(x - s * 0.55, y - s * 0.22); c.lineTo(x - s * 0.2, y - s * 0.22);
+      c.lineTo(x + s * 0.15, y - s * 0.6); c.lineTo(x + s * 0.15, y + s * 0.6);
+      c.lineTo(x - s * 0.2, y + s * 0.22); c.lineTo(x - s * 0.55, y + s * 0.22); c.closePath(); c.fill();
+      for (let i = 0; i < waves; i++) {
+        c.beginPath(); c.arc(x + s * 0.18, y, s * (0.36 + i * 0.28), -0.9, 0.9); c.stroke();
+      }
+      if (waves === 0) {
+        c.beginPath(); c.moveTo(x + s * 0.34, y - s * 0.3); c.lineTo(x + s * 0.78, y + s * 0.3); c.stroke();
+        c.beginPath(); c.moveTo(x + s * 0.78, y - s * 0.3); c.lineTo(x + s * 0.34, y + s * 0.3); c.stroke();
+      }
+    };
+    const icon = (n, x, y, s) => {
+      c.save(); c.fillStyle = dim; c.strokeStyle = dim;
+      c.lineWidth = Math.max(1, s * 0.13); c.lineJoin = 'round'; c.lineCap = 'round';
+      const sun = (r, rr) => {
+        c.beginPath(); c.arc(x, y, r, 0, 7); c.fill();
+        for (let i = 0; i < 8; i++) {
+          const a = i * Math.PI / 4;
+          c.beginPath(); c.moveTo(x + Math.cos(a) * rr * 0.68, y + Math.sin(a) * rr * 0.68);
+          c.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); c.stroke();
+        }
+      };
+      if (n === 'bri-dn') sun(s * 0.15, s * 0.32);
+      else if (n === 'bri-up') sun(s * 0.21, s * 0.46);
+      else if (n === 'grid') [[-1, -1], [0.08, -1], [-1, 0.08], [0.08, 0.08]].forEach(([a, b]) => { rrect(x + a * s * 0.4, y + b * s * 0.4, s * 0.32, s * 0.32, s * 0.07); c.fill(); });
+      else if (n === 'search') { c.beginPath(); c.arc(x - s * 0.07, y - s * 0.07, s * 0.29, 0, 7); c.stroke(); c.beginPath(); c.moveTo(x + s * 0.13, y + s * 0.13); c.lineTo(x + s * 0.4, y + s * 0.4); c.stroke(); }
+      else if (n === 'mic') { rrect(x - s * 0.13, y - s * 0.46, s * 0.26, s * 0.5, s * 0.13); c.fill(); c.beginPath(); c.arc(x, y - s * 0.06, s * 0.3, 0.15, Math.PI - 0.15); c.stroke(); c.beginPath(); c.moveTo(x, y + s * 0.24); c.lineTo(x, y + s * 0.44); c.stroke(); }
+      else if (n === 'moon') { c.beginPath(); c.arc(x + s * 0.04, y, s * 0.36, Math.PI * 0.42, Math.PI * 1.58); c.arc(x + s * 0.3, y, s * 0.4, Math.PI * 1.42, Math.PI * 0.58, true); c.closePath(); c.fill(); }
+      else if (n === 'prev') { tri(x - s * 0.18, y, s * 0.3, 'left'); tri(x + s * 0.3, y, s * 0.3, 'left'); }
+      else if (n === 'next') { tri(x - s * 0.3, y, s * 0.3, 'right'); tri(x + s * 0.18, y, s * 0.3, 'right'); }
+      else if (n === 'play') { tri(x - s * 0.26, y, s * 0.3, 'right'); c.fillRect(x + s * 0.12, y - s * 0.3, s * 0.13, s * 0.6); c.fillRect(x + s * 0.34, y - s * 0.3, s * 0.13, s * 0.6); }
+      else if (n === 'mute') speaker(x - s * 0.12, y, s * 0.62, 0);
+      else if (n === 'vol-dn') speaker(x - s * 0.05, y, s * 0.62, 1);
+      else if (n === 'vol-up') speaker(x - s * 0.12, y, s * 0.62, 2);
+      c.restore();
+    };
+    c.clearRect(0, 0, cw, ch);
+    c.textBaseline = 'middle';
+    keys.forEach((k) => {
+      const x = k.u * cw, y = k.v * ch, w = k.uw * cw, h = k.vh * ch, pad = h * 0.19;
+      if (k.t === 'main') {
+        c.textAlign = 'center'; c.fillStyle = ink; c.font = font(h * 0.33, 500);
+        c.fillText(k.l, x + w / 2, y + h * 0.53);
+      } else if (k.t === 'dual') {
+        const p = k.l.split(' ');
+        c.textAlign = 'center'; c.font = font(h * 0.26, 500);
+        c.fillStyle = dim; c.fillText(p[0], x + w / 2, y + h * 0.32);
+        c.fillStyle = ink; c.fillText(p[1], x + w / 2, y + h * 0.7);
+      } else if (k.t === 'fn') {
+        icon(k.ic, x + w / 2, y + h * 0.38, h * 0.42);
+        c.textAlign = 'center'; c.fillStyle = dim; c.font = font(h * 0.27, 400);
+        c.fillText(k.l, x + w / 2, y + h * 0.8);
+      } else if (k.t === 'edge' || k.t === 'edge-r') {
+        c.textAlign = k.t === 'edge' ? 'left' : 'right';
+        c.fillStyle = dim; c.font = font(Math.min(h * 0.25, w * 0.19), 400);
+        c.fillText(k.l, k.t === 'edge' ? x + pad : x + w - pad, y + h * 0.74);
+      } else if (k.t === 'touch') {
+        c.strokeStyle = 'rgba(177,178,180,0.55)'; c.lineWidth = Math.max(1, h * 0.03);
+        c.beginPath(); c.arc(x + w / 2, y + h * 0.5, h * 0.28, 0, 7); c.stroke();
+        c.beginPath(); c.arc(x + w / 2, y + h * 0.5, h * 0.16, 0.5, 4.2); c.stroke();
+      } else if (k.t === 'arrow') {
+        c.fillStyle = dim; tri(x + w / 2, y + h * 0.5, h * 0.3, k.l);
+      }
+    });
+    const t = new THREE.CanvasTexture(cv);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    return t;
+  }
+
+  // ---------- logo DRUVE gravada na tampa (usa o arquivo real da marca) ----------
+  logoTexture(THREE) {
+    if (this._logoTex) return this._logoTex;
+    const cv = document.createElement('canvas');
+    cv.width = 1024; cv.height = 284;
+    const c = cv.getContext('2d');
+    this.logoAspect = 1024 / 284;
+    const t = new THREE.CanvasTexture(cv);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    this._logoTex = t;
+    c.save(); c.translate(cv.width, cv.height); c.scale(-1, -1);
+    c.fillStyle = '#ffffff'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.letterSpacing = '12px';
+    c.font = '600 188px "Space Grotesk", ui-sans-serif, sans-serif';
+    c.fillText('DRUVE', cv.width / 2, cv.height / 2 + 6);
+    c.restore();
+    t.needsUpdate = true;
+    const img = new Image();
+    img.onload = () => { try { this.bakeLogo(img, cv, c, t); } catch (e) {} };
+    img.src = 'assets/logo-druve.jpg';
+    return t;
+  }
+
+  bakeLogo(img, cv, c, t) {
+    const S = 900, sc = Math.min(S / img.width, S / img.height);
+    const w = Math.max(1, Math.round(img.width * sc)), h = Math.max(1, Math.round(img.height * sc));
+    const tmp = document.createElement('canvas'); tmp.width = w; tmp.height = h;
+    const tc = tmp.getContext('2d');
+    tc.drawImage(img, 0, 0, w, h);
+    const d = tc.getImageData(0, 0, w, h).data;
+    const lum = (i) => d[i] * 0.299 + d[i + 1] * 0.587 + d[i + 2] * 0.114;
+    const rows = new Float32Array(h);
+    for (let y = 0; y < h; y++) {
+      let n = 0;
+      for (let x = 0; x < w; x++) if (lum((y * w + x) * 4) > 78) n++;
+      rows[y] = n;
+    }
+    // maior faixa contínua de tinta = o logotipo (descarta o tagline abaixo)
+    let best = null, cur = null;
+    for (let y = 0; y <= h; y++) {
+      const on = y < h && rows[y] > w * 0.01;
+      if (on) { if (!cur) cur = { a: y, b: y }; else cur.b = y; }
+      else if (cur) { if (!best || (cur.b - cur.a) > (best.b - best.a)) best = cur; cur = null; }
+    }
+    if (!best) return;
+    let bx0 = w, bx1 = -1;
+    for (let y = best.a; y <= best.b; y++) for (let x = 0; x < w; x++) if (lum((y * w + x) * 4) > 78) { if (x < bx0) bx0 = x; if (x > bx1) bx1 = x; }
+    if (bx1 <= bx0) return;
+    const pad = 3;
+    const cx0 = Math.max(0, bx0 - pad), cy0 = Math.max(0, best.a - pad);
+    const cwid = Math.min(w, bx1 + pad) - cx0, chei = Math.min(h, best.b + pad) - cy0;
+    if (cwid < 8 || chei < 4) return;
+    const crop = document.createElement('canvas'); crop.width = cwid; crop.height = chei;
+    const cc = crop.getContext('2d');
+    cc.drawImage(tmp, cx0, cy0, cwid, chei, 0, 0, cwid, chei);
+    const ci = cc.getImageData(0, 0, cwid, chei), cd = ci.data;
+    for (let i = 0; i < cd.length; i += 4) {
+      const l = (cd[i] * 0.299 + cd[i + 1] * 0.587 + cd[i + 2] * 0.114) / 255;
+      const a = Math.max(0, Math.min(1, (l - 0.14) / 0.26));
+      cd[i] = cd[i + 1] = cd[i + 2] = Math.round(232 + 23 * l);
+      cd[i + 3] = Math.round(a * 255);
+    }
+    cc.putImageData(ci, 0, 0);
+    cv.width = 1024; cv.height = Math.max(2, Math.round(1024 * chei / cwid));
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, cv.width, cv.height);
+    c.save(); c.translate(cv.width, cv.height); c.scale(-1, -1);
+    c.imageSmoothingQuality = 'high';
+    c.drawImage(crop, 0, 0, cv.width, cv.height);
+    c.restore();
+    this.logoAspect = cwid / chei;
+    if (this.logoMesh) this.logoMesh.scale.y = 3.6 / this.logoAspect;
+    t.needsUpdate = true;
+    this.syncHalo();
+  }
+
+  rr(c, x, y, w, h, r) {
+    c.beginPath();
+    c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+  }
+
+  // vídeo institucional rodando em loop na tela do notebook (seção hero)
+  makeVideoTexture(THREE, renderer, screenAspect) {
+    const v = document.createElement('video');
+    v.src = 'assets/druve-hero.mp4';
+    v.muted = true; v.defaultMuted = true; v.loop = true; v.autoplay = true;
+    v.playsInline = true; v.setAttribute('playsinline', '');
+    v.preload = 'auto'; v.crossOrigin = 'anonymous';
+    v.style.cssText = 'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px';
+    document.body.appendChild(v);
+    this.video = v;
+    this.wantVideo = true;
+    const tryPlay = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+    tryPlay();
+    // watchdog leve: checa 2x por segundo (fora do loop de render) se o vídeo
+    // travou no último frame e reinicia, com trava para não re-seekar em rajada
+    const restart = () => {
+      if (v._seeking || !this.wantVideo) return;
+      v._seeking = true;
+      v.currentTime = 0;
+      tryPlay();
+      setTimeout(() => { v._seeking = false; }, 400);
+    };
+    v.addEventListener('ended', restart);
+    this.vidWatch = setInterval(() => {
+      // reconcilia o estado desejado (hero visível) com o estado real do elemento
+      if (this.wantVideo && v.paused) tryPlay();
+      else if (!this.wantVideo && !v.paused) v.pause();
+      if (!v.duration || v.paused) return;
+      if (v.currentTime >= v.duration - 0.12) restart();
+      v._lastT = v.currentTime;
+    }, 500);
+    ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach((ev) => {
+      window.addEventListener(ev, tryPlay, { once: true, passive: true });
+    });
+    // VideoTexture: upload direto para a GPU (sem canvas nem filtro de CPU).
+    // O ganho de contraste/saturação passa a ser feito no shader da tela.
+    const t = new THREE.VideoTexture(v);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    const fit = () => {
+      if (!v.videoWidth) return;
+      const ar = v.videoWidth / v.videoHeight;
+      if (ar > screenAspect) { t.repeat.set(screenAspect / ar, 1); t.offset.set((1 - screenAspect / ar) / 2, 0); }
+      else { t.repeat.set(1, ar / screenAspect); t.offset.set(0, (1 - ar / screenAspect) / 2); }
+    };
+    v.addEventListener('loadedmetadata', fit);
+    fit();
+    return t;
+  }
+
+  makeScreenCanvas() {
+    const cv = document.createElement('canvas');
+    cv.width = 1536; cv.height = 960;
+    return cv;
+  }
+
+  paintScreens() {
+    const A = this.accent();
+    const chrome = (c, tint, title, tabs) => {
+      c.fillStyle = '#04060D'; c.fillRect(0, 0, 1536, 960);
+      c.fillStyle = '#0E1425'; c.fillRect(0, 0, 250, 960);
+      c.fillStyle = tint; this.rr(c, 30, 32, 30, 30, 9); c.fill();
+      c.fillStyle = '#E8EAEE'; c.font = '600 26px "Space Grotesk", sans-serif'; c.textBaseline = 'middle';
+      c.fillText(title, 76, 48);
+      tabs.forEach((t, i) => {
+        const y = 116 + i * 54;
+        if (i === 0) { c.fillStyle = 'rgba(255,255,255,0.07)'; this.rr(c, 20, y - 18, 210, 42, 10); c.fill(); c.fillStyle = tint; c.fillRect(20, y - 18, 3, 42); }
+        c.fillStyle = i === 0 ? '#E8EAEE' : '#7A7B7F';
+        c.font = '400 20px "Space Grotesk", sans-serif'; c.fillText(t, 44, y + 3);
+      });
+      c.fillStyle = '#0A0E1B'; c.fillRect(250, 0, 1286, 84);
+      c.fillStyle = '#141C33'; c.fillRect(250, 84, 1286, 1);
+      c.fillStyle = '#1B2544'; this.rr(c, 290, 26, 330, 34, 17); c.fill();
+      c.fillStyle = '#5D5E60'; c.font = '400 17px "Space Grotesk", sans-serif'; c.fillText('Buscar…', 312, 44);
+      c.fillStyle = tint; c.beginPath(); c.arc(1470, 42, 19, 0, 7); c.fill();
+      c.fillStyle = '#1B2544'; this.rr(c, 1330, 24, 108, 36, 18); c.fill();
+    };
+
+    const painters = [
+      // 0 — marca
+      (c) => {
+        const g = c.createLinearGradient(0, 0, 1536, 960);
+        g.addColorStop(0, '#0E1425'); g.addColorStop(0.6, '#0A0E1B'); g.addColorStop(1, '#04060D');
+        c.fillStyle = g; c.fillRect(0, 0, 1536, 960);
+        c.strokeStyle = 'rgba(255,255,255,0.05)'; c.lineWidth = 1;
+        for (let x = 0; x <= 1536; x += 64) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, 960); c.stroke(); }
+        for (let y = 0; y <= 960; y += 64) { c.beginPath(); c.moveTo(0, y); c.lineTo(1536, y); c.stroke(); }
+        const rg = c.createRadialGradient(768, 430, 40, 768, 430, 660);
+        rg.addColorStop(0, 'rgba(47,98,196,0.34)'); rg.addColorStop(0.5, 'rgba(47,98,196,0.12)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
+        c.fillStyle = rg; c.fillRect(0, 0, 1536, 960);
+        c.textAlign = 'center'; c.textBaseline = 'middle';
+        const tg = c.createLinearGradient(430, 0, 1106, 0);
+        tg.addColorStop(0, '#FFFFFF'); tg.addColorStop(1, '#7BA5EE');
+        c.fillStyle = tg; c.font = '600 168px "Space Grotesk", sans-serif';
+        c.fillText('DRUVE', 768, 448);
+        c.fillStyle = A; c.font = '500 22px "JetBrains Mono", monospace';
+        c.fillText('S I S T E M A S', 768, 566);
+        c.fillStyle = '#5D5E60'; c.font = '400 24px "Space Grotesk", sans-serif';
+        c.fillText('iGenda · MesaFlow · IPorte', 768, 664);
+        c.textAlign = 'left';
+      },
+      // 1 — iGenda
+      (c) => {
+        const tint = '#2F62C4';
+        chrome(c, tint, 'iGenda', ['Agenda', 'Clientes', 'PDV', 'Serviços', 'Relatórios', 'Ajustes']);
+        c.fillStyle = '#E8EAEE'; c.font = '600 34px "Space Grotesk", sans-serif';
+        c.fillText('Agenda de hoje', 296, 140);
+        c.fillStyle = '#7A7B7F'; c.font = '400 19px "Space Grotesk", sans-serif';
+        c.fillText('Quinta, 30 de julho · 14 atendimentos', 296, 180);
+        const cols = ['Rafael', 'Bia', 'Léo', 'Dani'];
+        const x0 = 400, cw = 262, y0 = 232;
+        c.font = '400 17px "JetBrains Mono", monospace';
+        for (let h = 0; h < 8; h++) {
+          const y = y0 + 40 + h * 82;
+          c.fillStyle = '#5D5E60'; c.fillText((9 + h) + ':00', 296, y);
+          c.strokeStyle = '#141C33'; c.beginPath(); c.moveTo(388, y - 18); c.lineTo(1476, y - 18); c.stroke();
+        }
+        cols.forEach((n, i) => {
+          c.fillStyle = '#A7A8AC'; c.font = '500 19px "Space Grotesk", sans-serif';
+          c.fillText(n, x0 + i * cw + 14, y0);
+        });
+        const appts = [[0, 0, 1.6, 'Corte + barba'], [1, 1, 1, 'Escova'], [2, 0, 2, 'Coloração'], [0, 3, 1.2, 'Corte social'], [3, 2, 1.5, 'Progressiva'], [1, 4, 1, 'Sobrancelha'], [2, 5, 1.8, 'Luzes'], [0, 6, 1, 'Barba'], [3, 5, 1, 'Hidratação']];
+        appts.forEach(([col, hr, dur, label], i) => {
+          const x = x0 + col * cw, y = y0 + 22 + hr * 82, h = dur * 82 - 12;
+          c.fillStyle = i % 3 === 0 ? 'rgba(47,98,196,0.26)' : 'rgba(47,98,196,0.15)';
+          this.rr(c, x, y, cw - 18, h, 10); c.fill();
+          c.fillStyle = tint; c.fillRect(x, y + 6, 3, h - 12);
+          c.fillStyle = '#CDCED0'; c.font = '500 18px "Space Grotesk", sans-serif';
+          c.fillText(label, x + 16, y + 26);
+          c.fillStyle = '#8A8D93'; c.font = '400 15px "JetBrains Mono", monospace';
+          c.fillText((9 + hr) + ':00', x + 16, y + 52);
+        });
+        c.fillStyle = '#0A0E1B'; this.rr(c, 1130, 108, 346, 96, 14); c.fill();
+        c.strokeStyle = '#1B2544'; c.stroke();
+        c.fillStyle = '#7A7B7F'; c.font = '400 16px "Space Grotesk", sans-serif'; c.fillText('Faturamento do dia', 1156, 140);
+        c.fillStyle = '#E8EAEE'; c.font = '600 32px "Space Grotesk", sans-serif'; c.fillText('R$ 2.480,00', 1156, 178);
+      },
+      // 2 — MesaFlow
+      (c) => {
+        const tint = '#2F62C4';
+        chrome(c, tint, 'MesaFlow', ['Salão', 'Comandas', 'Cardápio', 'Cozinha', 'Delivery', 'Caixa']);
+        c.fillStyle = '#E8EAEE'; c.font = '600 34px "Space Grotesk", sans-serif'; c.fillText('Salão', 296, 140);
+        c.fillStyle = '#7A7B7F'; c.font = '400 19px "Space Grotesk", sans-serif'; c.fillText('11 de 18 mesas ocupadas', 296, 180);
+        const states = ['open', 'open', 'free', 'bill', 'open', 'free', 'open', 'open', 'bill', 'free', 'open', 'open'];
+        states.forEach((st, i) => {
+          const x = 296 + (i % 4) * 208, y = 226 + Math.floor(i / 4) * 176;
+          const fill = st === 'free' ? '#0E1425' : st === 'bill' ? 'rgba(47,98,196,0.17)' : 'rgba(255,255,255,0.05)';
+          c.fillStyle = fill; this.rr(c, x, y, 188, 152, 14); c.fill();
+          c.strokeStyle = st === 'bill' ? 'rgba(47,98,196,0.5)' : '#1B2544'; c.lineWidth = 1.5; c.stroke();
+          c.fillStyle = st === 'free' ? '#3A3D45' : '#E8EAEE'; c.font = '600 30px "Space Grotesk", sans-serif';
+          c.fillText('M' + (i + 1), x + 20, y + 42);
+          c.font = '400 16px "Space Grotesk", sans-serif';
+          c.fillStyle = st === 'free' ? '#3A3D45' : st === 'bill' ? tint : '#8A8D93';
+          c.fillText(st === 'free' ? 'Livre' : st === 'bill' ? 'Fechando conta' : '4 pessoas · 32 min', x + 20, y + 80);
+          if (st !== 'free') { c.fillStyle = '#CDCED0'; c.font = '600 22px "Space Grotesk", sans-serif'; c.fillText('R$ ' + (86 + i * 13) + ',00', x + 20, y + 122); }
+        });
+        c.fillStyle = '#0A0E1B'; c.fillRect(1140, 85, 396, 875);
+        c.fillStyle = '#141C33'; c.fillRect(1140, 85, 1, 875);
+        c.fillStyle = '#E8EAEE'; c.font = '600 22px "Space Grotesk", sans-serif'; c.fillText('Cozinha · agora', 1172, 132);
+        [['Mesa 4', 'Picanha ao ponto ×2', '3 min'], ['Mesa 7', 'Risoto de funghi', '6 min'], ['Delivery', 'Combo família', '9 min'], ['Mesa 1', 'Tábua de frios', '11 min'], ['Balcão', 'Chopp 500ml ×4', '12 min']].forEach((t, i) => {
+          const y = 176 + i * 118;
+          c.fillStyle = 'rgba(255,255,255,0.04)'; this.rr(c, 1172, y, 332, 98, 12); c.fill();
+          c.fillStyle = tint; c.font = '500 15px "JetBrains Mono", monospace'; c.fillText(t[0].toUpperCase(), 1192, y + 30);
+          c.fillStyle = '#DEDFE1'; c.font = '400 20px "Space Grotesk", sans-serif'; c.fillText(t[1], 1192, y + 62);
+          c.fillStyle = '#7A7B7F'; c.font = '400 16px "JetBrains Mono", monospace'; c.fillText(t[2], 1192, y + 86);
+        });
+      },
+      // 3 — IPorte
+      (c) => {
+        const tint = '#2F62C4';
+        chrome(c, tint, 'IPorte', ['Visão geral', 'Fluxo de caixa', 'Contas', 'Projeções', 'Alertas', 'Contador']);
+        c.fillStyle = '#7A7B7F'; c.font = '400 19px "Space Grotesk", sans-serif'; c.fillText('Saldo consolidado · julho', 296, 136);
+        c.fillStyle = '#F2F3F5'; c.font = '600 72px "Space Grotesk", sans-serif'; c.fillText('R$ 148.320', 296, 196);
+        c.fillStyle = tint; c.font = '500 22px "Space Grotesk", sans-serif'; c.fillText('▲ 12,4% vs. junho', 296, 250);
+        const cx = 296, cy = 300, cw = 780, ch = 300;
+        c.fillStyle = '#0A0E1B'; this.rr(c, cx, cy, cw, ch, 14); c.fill();
+        c.strokeStyle = '#141C33'; c.lineWidth = 1; c.stroke();
+        const vals = [0.42, 0.55, 0.48, 0.66, 0.58, 0.74, 0.69, 0.82, 0.76, 0.9, 0.85, 0.97];
+        const bw = 40, gap = (cw - 80 - vals.length * bw) / (vals.length - 1);
+        vals.forEach((v, i) => {
+          const h = v * (ch - 90), x = cx + 40 + i * (bw + gap), y = cy + ch - 44 - h;
+          const g = c.createLinearGradient(0, y, 0, y + h);
+          g.addColorStop(0, i === vals.length - 1 ? tint : 'rgba(47,98,196,0.55)');
+          g.addColorStop(1, 'rgba(47,98,196,0.06)');
+          c.fillStyle = g; this.rr(c, x, y, bw, h, 6); c.fill();
+        });
+        c.fillStyle = '#5D5E60'; c.font = '400 15px "JetBrains Mono", monospace';
+        ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'].forEach((m, i) => {
+          c.fillText(m, cx + 40 + i * (bw + gap) + bw / 2 - 4, cy + ch - 18);
+        });
+        [['A receber', 'R$ 32.410', '18 títulos'], ['A pagar', 'R$ 19.780', '7 títulos'], ['Projeção 30d', 'R$ 161.050', 'confiança alta']].forEach((t, i) => {
+          const y = 108 + i * 132;
+          c.fillStyle = '#0A0E1B'; this.rr(c, 1116, y, 388, 112, 14); c.fill();
+          c.strokeStyle = '#141C33'; c.stroke();
+          c.fillStyle = '#7A7B7F'; c.font = '400 16px "Space Grotesk", sans-serif'; c.fillText(t[0], 1144, y + 34);
+          c.fillStyle = '#E8EAEE'; c.font = '600 34px "Space Grotesk", sans-serif'; c.fillText(t[1], 1144, y + 74);
+          c.fillStyle = '#5D5E60'; c.font = '400 15px "JetBrains Mono", monospace'; c.fillText(t[2], 1144, y + 100);
+        });
+        c.fillStyle = 'rgba(47,98,196,0.10)'; this.rr(c, 1116, 508, 388, 172, 14); c.fill();
+        c.strokeStyle = 'rgba(47,98,196,0.35)'; c.stroke();
+        c.fillStyle = tint; c.font = '500 15px "JetBrains Mono", monospace'; c.fillText('ALERTA INTELIGENTE', 1144, 542);
+        c.fillStyle = '#CDCED0'; c.font = '400 21px "Space Grotesk", sans-serif';
+        c.fillText('Dia 12 o saldo fica abaixo', 1144, 586);
+        c.fillText('da reserva. Antecipar 3', 1144, 618);
+        c.fillText('recebíveis resolve.', 1144, 650);
+      },
+      // 4 — fundo (o HTML do site aparece por cima)
+      (c) => {
+        const g = c.createLinearGradient(0, 0, 0, 960);
+        g.addColorStop(0, '#0E1425'); g.addColorStop(0.55, '#070A14'); g.addColorStop(1, '#04060D');
+        c.fillStyle = g; c.fillRect(0, 0, 1536, 960);
+        const rg = c.createRadialGradient(768, -60, 40, 768, -60, 900);
+        rg.addColorStop(0, 'rgba(47,98,196,0.22)'); rg.addColorStop(1, 'rgba(0,0,0,0)');
+        c.fillStyle = rg; c.fillRect(0, 0, 1536, 960);
+      }
+    ];
+
+    if (!this.screenCanvases) this.screenCanvases = painters.map(() => this.makeScreenCanvas());
+    painters.forEach((p, i) => {
+      const ctx = this.screenCanvases[i].getContext('2d');
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, 1536, 960);
+      ctx.textBaseline = 'middle';
+      p(ctx);
+    });
+    if (this.screenTextures) this.screenTextures.forEach((t) => { t.needsUpdate = true; });
+  }
+
+  async init() {
+    let THREE;
+    try { THREE = await import('three'); }
+    catch (e) { THREE = await import('https://unpkg.com/three@0.184.0/build/three.module.js'); }
+    if (this.dead || !this.canvas) return;
+    this.THREE = THREE;
+
+    const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.18;
+    this.renderer = renderer;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 40);
+    camera.position.set(0, 0.095, 0.74);
+    camera.lookAt(0, 0.072, 0);
+    this.scene = scene; this.camera = camera;
+
+    // studio environment: cool softbox above, violet + blue kickers on the sides
+    const envCv = document.createElement('canvas'); envCv.width = 512; envCv.height = 256;
+    const ec = envCv.getContext('2d');
+    const eg = ec.createLinearGradient(0, 0, 0, 256);
+    eg.addColorStop(0, '#ffffff'); eg.addColorStop(0.26, '#B1B2B4'); eg.addColorStop(0.5, '#2B2E36'); eg.addColorStop(1, '#04060D');
+    ec.fillStyle = eg; ec.fillRect(0, 0, 512, 256);
+    ec.fillStyle = '#ffffff';
+    ec.fillRect(88, 0, 190, 66); ec.fillRect(346, 8, 120, 46); ec.fillRect(0, 0, 512, 12);
+    const vg = ec.createRadialGradient(56, 150, 4, 56, 150, 130);
+    vg.addColorStop(0, 'rgba(47,98,196,0.55)'); vg.addColorStop(1, 'rgba(47,98,196,0)');
+    ec.fillStyle = vg; ec.fillRect(0, 40, 220, 220);
+    const bg2 = ec.createRadialGradient(452, 140, 4, 452, 140, 120);
+    bg2.addColorStop(0, 'rgba(74,128,224,0.5)'); bg2.addColorStop(1, 'rgba(74,128,224,0)');
+    ec.fillStyle = bg2; ec.fillRect(300, 30, 212, 226);
+    const envTex = new THREE.Texture(envCv);
+    envTex.mapping = THREE.EquirectangularReflectionMapping;
+    envTex.colorSpace = THREE.SRGBColorSpace;
+    envTex.needsUpdate = true;
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromEquirectangular(envTex).texture;
+    scene.environmentIntensity = 0.78;
+    pmrem.dispose();
+
+    scene.add(new THREE.HemisphereLight(0xdfe3ea, 0x04060d, 0.9));
+    scene.add(new THREE.AmbientLight(0x141c33, 0.7));
+    const key = new THREE.DirectionalLight(0xffffff, 4.1); key.position.set(0.7, 1.0, 0.75); scene.add(key);
+    const fill = new THREE.DirectionalLight(0xcfd3da, 2.0); fill.position.set(-1.0, 0.4, 0.55); scene.add(fill);
+    const rim = new THREE.DirectionalLight(0xffffff, 2.7); rim.position.set(-0.35, 0.75, -0.95); scene.add(rim);
+    const rim2 = new THREE.DirectionalLight(0xcfd3da, 2.4); rim2.position.set(0.95, -0.2, -0.6); scene.add(rim2);
+    const under = new THREE.PointLight(0x4a80e0, 0.22, 1.2, 2); under.position.set(0, -0.16, 0.14); scene.add(under);
+    // brilho da tela sobre o teclado: sem atenuação, para não estourar quando o modelo é ampliado
+    this.spill = new THREE.PointLight(0xffffff, 0.5, 0, 0); this.spill.position.set(0, 0.06, 0.04); scene.add(this.spill);
+
+    const f = this.finish();
+    const mm = this.metalMaps(THREE);
+    const V2 = (a) => new THREE.Vector2(a, a);
+    const logoTex = this.logoTexture(THREE);
+    const mats = {
+      body: new THREE.MeshPhysicalMaterial({ name: 'aluminio-anodizado', color: f.body, roughness: Math.min(1, f.rough * 1.85), metalness: f.metal, normalMap: mm.normal, normalScale: V2(0.3), roughnessMap: mm.rough, anisotropy: 0.5, anisotropyRotation: Math.PI / 2, clearcoat: 0.14, clearcoatRoughness: 0.42 }),
+      edge: new THREE.MeshPhysicalMaterial({ name: 'chanfro-polido', color: f.edge, roughness: 0.12, metalness: 1, clearcoat: 0.6, clearcoatRoughness: 0.1 }),
+      dark: new THREE.MeshStandardMaterial({ name: 'preto-fosco', color: '#101216', roughness: 0.62, metalness: 0.25 }),
+      deck: new THREE.MeshStandardMaterial({ name: 'recuo-teclado', color: '#191B1F', roughness: 0.88, metalness: 0.1, normalMap: mm.normal, normalScale: V2(0.18), envMapIntensity: 0.22 }),
+      key: new THREE.MeshLambertMaterial({ name: 'tecla', color: '#2B2D31', normalMap: mm.normal, normalScale: V2(0.45), reflectivity: 0 }),
+      grille: new THREE.MeshStandardMaterial({ name: 'grade-alto-falante', color: f.body, roughness: 0.62, metalness: f.metal, envMapIntensity: 0.75 }),
+      glass: new THREE.MeshPhysicalMaterial({ name: 'vidro-trackpad', color: '#0E1013', roughness: 0.16, metalness: 0.05, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 0.22 }),
+      panel: new THREE.MeshPhysicalMaterial({ name: 'vidro-moldura', color: '#04060D', roughness: 0.18, metalness: 0.5, clearcoat: 0.9, clearcoatRoughness: 0.08 }),
+      screenGlass: new THREE.MeshPhysicalMaterial({ name: 'vidro-tela', color: '#ffffff', transparent: true, opacity: 0.055, roughness: 0.045, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.03, depthWrite: false }),
+      notch: new THREE.MeshStandardMaterial({ name: 'notch', color: '#04060D', roughness: 0.44, metalness: 0.1 }),
+      port: new THREE.MeshStandardMaterial({ name: 'porta', color: '#0A0B0E', roughness: 0.68, metalness: 0.22 }),
+      tongue: new THREE.MeshStandardMaterial({ name: 'lingueta-usb', color: '#C6C8CC', roughness: 0.55, metalness: 0.1 }),
+      foot: new THREE.MeshStandardMaterial({ name: 'pe-borracha', color: '#0E1425', roughness: 0.88, metalness: 0.04 }),
+      logo: new THREE.MeshPhysicalMaterial({ name: 'logo-druve', color: '#ffffff', roughness: 0.15, metalness: 0.2, clearcoat: 0.7, clearcoatRoughness: 0.06, transparent: true, map: logoTex, emissiveMap: logoTex, emissive: '#ffffff', emissiveIntensity: 1.3 })
+    };
+    this.mats = mats;
+
+    const W = 0.324, D = 0.224, BH = 0.0125, LT = 0.0062;
+    const SW = 0.302, SH = 0.189, LH = D * 0.945, TOP = BH / 2;
+
+    const nb = new THREE.Group(); nb.name = 'notebook';
+    const pivotY = BH / 2;
+
+    const base = new THREE.Mesh(this.roundedBox(THREE, W, D, BH, 0.014), mats.body);
+    base.name = 'base'; base.rotation.x = -Math.PI / 2; nb.add(base);
+
+    const footG = new THREE.CylinderGeometry(0.0048, 0.0042, 0.0018, 20);
+    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz], i) => {
+      const ft = new THREE.Mesh(footG, mats.foot);
+      ft.name = 'pe-' + (i + 1); ft.userData.noFit = true;
+      ft.position.set(sx * (W / 2 - 0.026), -BH / 2 - 0.0008, sz * (D / 2 - 0.024));
+      nb.add(ft);
+    });
+
+    // ---------- portas laterais: recortes reais numa placa usinada ----------
+    // [tipo, z, largura, altura] — esq.: MagSafe / USB-A / fone; dir.: SDXC / USB-A / Thunderbolt
+    const baseBev = Math.min(0.014 * 0.42, BH * 0.26);
+    const PLT = 0.0018, PLX = W / 2 + baseBev - 0.0010, bandH = 0.0050;
+    [[-1, [['magsafe', -0.052, 0.0146, 0.0030], ['usba', -0.013, 0.0124, 0.0040], ['jack', 0.021, 0.0038, 0.0038]]],
+     [1, [['sd', -0.050, 0.0250, 0.0024], ['usba', -0.011, 0.0124, 0.0040], ['tb', 0.023, 0.0082, 0.0038]]]].forEach(([sx, list]) => {
+      const g = new THREE.Group();
+      g.name = 'portas-' + (sx < 0 ? 'esq' : 'dir');
+      g.userData.noFit = true;
+      const cxs = list.map(([, z]) => -sx * z);
+      const lo = Math.min.apply(null, list.map(([, z, w], i) => cxs[i] - w / 2)) - 0.009;
+      const hi = Math.max.apply(null, list.map(([, z, w], i) => cxs[i] + w / 2)) + 0.009;
+      const plate = this.rrPath(THREE, THREE.Shape, (lo + hi) / 2, 0, hi - lo, bandH, 0.0024);
+      list.forEach(([kind, z, w, h], i) => {
+        plate.holes.push(kind === 'jack'
+          ? new THREE.Path().absarc(cxs[i], 0, w / 2, 0, Math.PI * 2, true)
+          : this.rrPath(THREE, THREE.Path, cxs[i], 0, w, h, kind === 'usba' ? 0.0006 : Math.min(w, h) * 0.44));
+      });
+      const bev = 0.00024;
+      const pm = new THREE.Mesh(new THREE.ExtrudeGeometry(plate, { depth: PLT - bev * 2, bevelEnabled: true, bevelThickness: bev, bevelSize: bev, bevelSegments: 2, curveSegments: 16 }), mats.body);
+      pm.name = 'placa-portas'; pm.userData.noFit = true;
+      pm.position.z = bev;
+      this.smoothNormals(THREE, pm.geometry, 34);
+      g.add(pm);
+      list.forEach(([kind, z, w, h], i) => {
+        const cav = new THREE.Mesh(
+          kind === 'jack' ? new THREE.CircleGeometry(w / 2 - 0.00014, 28)
+            : this.roundedPlane(THREE, w - 0.00028, h - 0.00028, kind === 'usba' ? 0.0005 : Math.min(w, h) * 0.4),
+          mats.port);
+        cav.name = 'porta-' + kind; cav.userData.noFit = true;
+        cav.position.set(cxs[i], 0, 0.00128);
+        g.add(cav);
+        if (kind === 'usba') {
+          const tg = new THREE.Mesh(new THREE.BoxGeometry(w - 0.0026, 0.0013, 0.0009), mats.tongue);
+          tg.name = 'lingueta-usb'; tg.userData.noFit = true;
+          tg.position.set(cxs[i], -0.0008, 0.00138);
+          g.add(tg);
+        }
+      });
+      g.rotation.y = sx * Math.PI / 2;
+      g.position.set(sx * PLX, 0, 0);
+      nb.add(g);
+    });
+
+    // ---------- teclado ----------
+    const U = 0.0142, G = 0.0022, kH = 0.0019, z0 = -0.078;
+    const cell = (m) => U * m + G * (m - 1);
+    const FN = [['bri-dn', 'F1'], ['bri-up', 'F2'], ['grid', 'F3'], ['search', 'F4'], ['mic', 'F5'], ['moon', 'F6'], ['prev', 'F7'], ['play', 'F8'], ['next', 'F9'], ['mute', 'F10'], ['vol-dn', 'F11'], ['vol-up', 'F12']];
+    const ROWS = [
+      { h: 0.6, keys: [['esc', 1.4, 'edge']].concat(FN.map(([ic, lb]) => [lb, 0.95, 'fn', ic]), [['', 1.2, 'touch']]) },
+      { h: 1, keys: [['~ `', 0.95, 'dual'], ['! 1', 0.95, 'dual'], ['@ 2', 0.95, 'dual'], ['# 3', 0.95, 'dual'], ['$ 4', 0.95, 'dual'], ['% 5', 0.95, 'dual'], ['^ 6', 0.95, 'dual'], ['& 7', 0.95, 'dual'], ['* 8', 0.95, 'dual'], ['( 9', 0.95, 'dual'], [') 0', 0.95, 'dual'], ['_ -', 0.95, 'dual'], ['+ =', 0.95, 'dual'], ['delete', 1.65, 'edge-r']] },
+      { h: 1, keys: [['tab', 1.45, 'edge'], ['Q', 0.95, 'main'], ['W', 0.95, 'main'], ['E', 0.95, 'main'], ['R', 0.95, 'main'], ['T', 0.95, 'main'], ['Y', 0.95, 'main'], ['U', 0.95, 'main'], ['I', 0.95, 'main'], ['O', 0.95, 'main'], ['P', 0.95, 'main'], ['{ [', 0.95, 'dual'], ['} ]', 0.95, 'dual'], ['| \\', 1.15, 'dual']] },
+      { h: 1, keys: [['caps lock', 1.75, 'edge'], ['A', 0.95, 'main'], ['S', 0.95, 'main'], ['D', 0.95, 'main'], ['F', 0.95, 'main'], ['G', 0.95, 'main'], ['H', 0.95, 'main'], ['J', 0.95, 'main'], ['K', 0.95, 'main'], ['L', 0.95, 'main'], [': ;', 0.95, 'dual'], ['" \'', 0.95, 'dual'], ['return', 1.8, 'edge-r']] },
+      { h: 1, keys: [['shift', 2.3, 'edge'], ['Z', 0.95, 'main'], ['X', 0.95, 'main'], ['C', 0.95, 'main'], ['V', 0.95, 'main'], ['B', 0.95, 'main'], ['N', 0.95, 'main'], ['M', 0.95, 'main'], ['< ,', 0.95, 'dual'], ['> .', 0.95, 'dual'], ['? /', 0.95, 'dual'], ['shift', 2.2, 'edge-r']] },
+      { h: 1, keys: [['fn', 1.05, 'edge'], ['control', 1.05, 'edge'], ['option', 1.05, 'edge'], ['command', 1.25, 'edge'], ['', 4.525, 'space'], ['command', 1.25, 'edge-r'], ['option', 1.05, 'edge-r'], ['left', 0.925, 'arrow'], ['', 0.925, 'arrow-v'], ['right', 0.925, 'arrow']] }
+    ];
+    const totalW = cell(14);
+    const kbDepth = U * 5.6 + G * 5;
+    const kb = new THREE.Group(); kb.name = 'teclado';
+    const legends = [];
+    let zc = z0;
+    ROWS.forEach((row, r) => {
+      const kh = U * row.h;
+      let x = -totalW / 2;
+      row.keys.forEach((def, i) => {
+        const w = cell(def[1]), type = def[2], ic = def[3];
+        const put = (kz, khh, t, l, n) => {
+          const k = new THREE.Mesh(this.roundedBox(THREE, w, khh, kH, 0.0019, 0), mats.key);
+          k.name = 'tecla-' + r + '-' + i + (n || '');
+          k.userData.noFit = true;
+          k.rotation.x = -Math.PI / 2;
+          k.position.set(x + w / 2, TOP + 0.0009, kz + khh / 2);
+          kb.add(k);
+          legends.push({ u: (x + totalW / 2) / totalW, v: (kz - z0) / kbDepth, uw: w / totalW, vh: khh / kbDepth, t: t, l: l, ic: ic });
+        };
+        if (type === 'arrow-v') {
+          const hh = (kh - G) / 2;
+          put(zc, hh, 'arrow', 'up', 'a');
+          put(zc + hh + G, hh, 'arrow', 'down', 'b');
+        } else {
+          put(zc, kh, type, def[0]);
+        }
+        x += w + G;
+      });
+      zc += kh + G;
+    });
+    nb.add(kb);
+
+    const wellW = totalW + 0.009, wellD = kbDepth + 0.009, wellZ = z0 + kbDepth / 2;
+    const well = new THREE.Mesh(this.roundedBox(THREE, wellW, wellD, 0.0016, 0.0035), mats.deck);
+    well.name = 'recuo-teclado'; well.userData.noFit = true;
+    well.rotation.x = -Math.PI / 2; well.position.set(0, TOP - 0.0006, wellZ); nb.add(well);
+
+    const legend = new THREE.Mesh(new THREE.PlaneGeometry(totalW, kbDepth), new THREE.MeshBasicMaterial({ name: 'serigrafia', map: this.legendTexture(THREE, legends, totalW / kbDepth), transparent: true, depthWrite: false, toneMapped: false, color: 0xb6bac1 }));
+    legend.name = 'legendas-teclas'; legend.userData.noFit = true;
+    legend.rotation.x = -Math.PI / 2;
+    legend.position.set(0, TOP + 0.0009 + kH / 2 + 0.00014, wellZ); nb.add(legend);
+
+    const grW = (W / 2 - 0.0078) - (wellW / 2 + 0.0042);
+    mats.grille.map = this.grilleTexture(THREE, grW / 0.0112, wellD / 0.0112);
+    [-1, 1].forEach((sx) => {
+      const gr = new THREE.Mesh(this.roundedPlane(THREE, grW, wellD * 0.97, 0.0022), mats.grille);
+      gr.name = 'grade-' + (sx < 0 ? 'esq' : 'dir'); gr.userData.noFit = true;
+      gr.rotation.x = -Math.PI / 2;
+      gr.position.set(sx * (wellW / 2 + 0.0042 + grW / 2), TOP + 0.0003, wellZ);
+      nb.add(gr);
+    });
+
+    const tp = new THREE.Mesh(this.roundedBox(THREE, 0.112, 0.073, 0.0012, 0.0055), mats.glass);
+    tp.name = 'trackpad'; tp.rotation.x = -Math.PI / 2;
+    tp.position.set(0, TOP + 0.0009, D / 2 - 0.0475); nb.add(tp);
+
+    const shelf = new THREE.Mesh(this.roundedPlane(THREE, W - 0.052, 0.0135, 0.002), mats.dark);
+    shelf.name = 'tampa-dobradica'; shelf.userData.noFit = true;
+    shelf.rotation.x = -Math.PI / 2;
+    shelf.position.set(0, TOP + 0.0004, -D / 2 + 0.0135); nb.add(shelf);
+
+    const hinge = new THREE.Mesh(new THREE.CylinderGeometry(0.0034, 0.0034, W - 0.062, 24), mats.edge);
+    hinge.name = 'dobradica'; hinge.rotation.z = Math.PI / 2;
+    hinge.position.set(0, pivotY + 0.001, -D / 2 + 0.006); nb.add(hinge);
+
+    // ---------- tampa ----------
+    const lid = new THREE.Group(); lid.name = 'tampa';
+    lid.position.set(0, pivotY + 0.001, -D / 2 + 0.006);
+    const lidBody = new THREE.Mesh(this.roundedBox(THREE, W, LH, LT, 0.013), mats.body);
+    lidBody.name = 'tampa-corpo'; lidBody.position.y = LH / 2; lid.add(lidBody);
+    const bezel = new THREE.Mesh(this.roundedPlane(THREE, W - 0.0034, LH - 0.0034, 0.0114), mats.panel);
+    bezel.name = 'moldura'; bezel.position.set(0, LH / 2, LT / 2 + 0.00045); lid.add(bezel);
+
+    this.tints = [0xffffff, 0x4a80e0, 0x4a80e0, 0x4a80e0, 0xffffff, parseInt(this.accent().replace('#', ''), 16)];
+    this.paintScreens();
+    this.screenTextures = this.screenCanvases.map((cv) => {
+      const t = new THREE.CanvasTexture(cv);
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      return t;
+    });
+    this.videoTex = this.makeVideoTexture(THREE, renderer, SW / SH);
+    if (this.videoTex) this.screenTextures.push(this.videoTex);
+    this.screenMat = new THREE.MeshBasicMaterial({ name: 'tela', map: this.screenTextures[this.videoTex ? this.screenTextures.length - 1 : 0], toneMapped: false });
+    // contraste + saturação na GPU, aplicados só quando a tela mostra o vídeo
+    this.punch = { value: this.videoTex ? 1 : 0 };
+    this.screenMat.onBeforeCompile = (sh) => {
+      sh.uniforms.uPunch = this.punch;
+      sh.fragmentShader = 'uniform float uPunch;\n' + sh.fragmentShader.replace(
+        '#include <map_fragment>',
+        '#include <map_fragment>\n  { vec3 pc = diffuseColor.rgb;\n    float pl = dot(pc, vec3(0.2126, 0.7152, 0.0722));\n    pc = mix(vec3(pl), pc, 1.0 + 0.22 * uPunch);\n    pc = (pc - 0.5) * (1.0 + 0.17 * uPunch) + 0.5 + 0.015 * uPunch;\n    diffuseColor.rgb = clamp(pc, 0.0, 1.6); }'
+      );
+    };
+    const screen = new THREE.Mesh(this.roundedPlane(THREE, SW, SH, 0.0042), this.screenMat);
+    screen.name = 'tela';
+    const scY = LH / 2 + 0.0035;
+    screen.position.set(0, scY, LT / 2 + 0.0009); lid.add(screen);
+
+    const notchH = 0.0062, notchTop = scY + SH / 2;
+    const notch = new THREE.Mesh(this.roundedPlane(THREE, 0.0318, notchH, 0.0022), mats.notch);
+    notch.name = 'notch'; notch.userData.noFit = true;
+    notch.position.set(0, notchTop - notchH / 2 + 0.0002, LT / 2 + 0.00125); lid.add(notch);
+    const cam = new THREE.Mesh(new THREE.CircleGeometry(0.00105, 20), mats.glass);
+    cam.name = 'camera'; cam.userData.noFit = true;
+    cam.position.set(0.0062, notchTop - notchH / 2 + 0.0002, LT / 2 + 0.0014); lid.add(cam);
+    const led = new THREE.Mesh(new THREE.CircleGeometry(0.00042, 12), mats.dark);
+    led.userData.noFit = true;
+    led.position.set(-0.0062, notchTop - notchH / 2 + 0.0002, LT / 2 + 0.0014); lid.add(led);
+
+    const glass = new THREE.Mesh(this.roundedPlane(THREE, W - 0.0034, LH - 0.0034, 0.0114), mats.screenGlass);
+    glass.name = 'vidro-tela'; glass.userData.noFit = true;
+    glass.position.set(0, LH / 2, LT / 2 + 0.00165); lid.add(glass);
+
+    const logo = new THREE.Mesh(new THREE.PlaneGeometry(0.104, 0.104 / 3.6), mats.logo);
+    logo.name = 'logo-druve'; logo.userData.noFit = true;
+    logo.position.set(0, LH / 2, -LT / 2 - 0.00035);
+    logo.rotation.y = Math.PI; lid.add(logo);
+    const haloTex = this.haloTexture(THREE);
+    const halo = new THREE.Mesh(new THREE.PlaneGeometry(0.104 * (1 + this.haloPad.x * 2), (0.104 / 3.6) * (1 + this.haloPad.y * 2)), new THREE.MeshBasicMaterial({ name: 'halo-logo', map: haloTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, opacity: 0.68 }));
+    halo.name = 'halo-logo'; halo.userData.noFit = true;
+    halo.position.set(0, LH / 2, -LT / 2 - 0.0005);
+    halo.rotation.y = Math.PI; lid.add(halo);
+    this.logoHalo = halo;
+    this.logoMesh = logo;
+    if (this.logoAspect) logo.scale.y = 3.6 / this.logoAspect;
+    nb.add(lid);
+    this.lid = lid;
+
+    lid.rotation.x = 0; nb.updateMatrixWorld(true);
+    const spos = screen.getWorldPosition(new THREE.Vector3());
+    this.SCY = spos.y; this.SCZ = spos.z;
+    lid.rotation.x = Math.PI / 2; nb.updateMatrixWorld(true);
+    const lpos = lidBody.getWorldPosition(new THREE.Vector3());
+    this.LCY = lpos.y; this.LCZ = lpos.z;
+
+    const rig = new THREE.Group(); rig.name = 'rig'; rig.add(nb); scene.add(rig);
+    this.rig = rig; this.nb = nb;
+
+    this.onResize = () => {
+      const w = this.canvas.clientWidth || window.innerWidth;
+      const h = this.canvas.clientHeight || window.innerHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.updateProjectionMatrix();
+      this.halfH = Math.tan((camera.fov * Math.PI / 180) / 2) * camera.position.z;
+      this.halfW = this.halfH * camera.aspect;
+      if (this.secEls) this.layoutSections();
+      if (this.kf) this.layoutKeyframes();
+    };
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
+
+    const TAU = Math.PI * 2;
+    this.kf = [
+      { xu: 0.48, y: 0.004, z: 0.02, ry: -0.36, rx: 0.05, lid: 1.86, s: 1.0 },
+      { xu: -0.44, y: 0.004, z: 0.03, ry: 0.42 - TAU, rx: 0.06, lid: 1.86, s: 1.0 },
+      { xu: 0.44, y: 0.004, z: 0.03, ry: -0.42 - TAU, rx: 0.06, lid: 1.86, s: 1.0 },
+      { xu: -0.44, y: 0.004, z: 0.03, ry: 0.42 - 2 * TAU, rx: -0.05, lid: 1.86, s: 1.0 },
+      { xu: 0.0, y: 0.05, z: 0.0, ry: -0.16 - 2 * TAU, rx: 1.3, lid: 0.02, s: 3.0 },
+      { xu: 0.0, y: 0.0, z: 0.0, ry: -2 * TAU, rx: 0.0, lid: Math.PI / 2, s: 2.4 }
+    ];
+    this.screenMap = [0, 1, 2, 3, 0, 4];
+    if (this.videoTex) this.screenMap[0] = this.screenTextures.length - 1;
+    this.layoutKeyframes();
+    this.secEls = Array.from(document.querySelectorAll('[data-sec]'));
+    this.fcards = this.secEls.map((el) => Array.from(el.querySelectorAll('[data-fcard]')));
+    this.fbars = this.secEls.map((el) => el.querySelector('[data-fbar]'));
+    this.rings = Array.from(document.querySelectorAll('[data-ring]'));
+    this.fcounts = this.secEls.map((el) => el.querySelector('[data-fcount]'));
+    this.panels = [];
+    Array.from(document.querySelectorAll('[data-panel]')).forEach((el) => {
+      const sec = el.closest('[data-sec]');
+      const n = this.secEls.indexOf(sec);
+      if (n >= 0) this.panels[n] = el;
+    });
+    this.sticks = Array.from(document.querySelectorAll('[data-stick]'));
+    this.navLinks = document.querySelector('[data-navlinks]');
+    this.ctaLong = document.querySelector('[data-cta-long]');
+    this.ctaShort = document.querySelector('[data-cta-short]');
+    this.layoutSections();
+    this.buildPhone(THREE);
+    this.relayout();
+    if (window.ResizeObserver) {
+      this.ro = new ResizeObserver(() => {
+        if (this.roT) cancelAnimationFrame(this.roT);
+        this.roT = requestAnimationFrame(() => this.relayout());
+      });
+      this.panels.forEach((p) => { if (p) this.ro.observe(p); });
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.relayout());
+    [420, 1200].forEach((t) => setTimeout(() => this.relayout(), t));
+    this.frame = 0;
+    this.ryBase = 0;
+    this.jump = null;
+    this.fvis = 0;
+    this.bindNav();
+    this.loop();
+  }
+
+  bindNav() {
+    const cancel = () => { if (this.jump) this.jump = null; if (this.build) this.build = null; if (this.glide) this.glide = null; };
+    ['wheel', 'touchstart'].forEach((ev) => window.addEventListener(ev, cancel, { passive: true }));
+    document.addEventListener('click', (e) => {
+      const a = e.target && e.target.closest && e.target.closest('a[data-enter]');
+      if (!a) return;
+      e.preventDefault();
+      if (!this.enter) this.startEnter(a);
+    }, true);
+    document.addEventListener('click', (e) => {
+      const a = e.target && e.target.closest && e.target.closest('a[href]');
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (href.length < 2 || href.charAt(0) !== '#') return;
+      if (/^#s\d$/.test(href)) {
+        const i = parseInt(href.slice(2), 10);
+        if (isNaN(i) || !this.kf || !this.kf[i]) return;
+        e.preventDefault();
+        const full = !!(this.fcards && this.fcards[i] && this.fcards[i].length);
+        this.startJump(i, full, { snap: true, build: full });
+        return;
+      }
+      const el = document.getElementById(href.slice(1));
+      if (!el || el.hasAttribute('data-sec')) return;
+      e.preventDefault();
+      this.diveTo(el);
+    });
+  }
+
+  // âncoras abaixo da sequência 3D: mergulho puro (sem giro nem tampa) e o conteúdo se monta na chegada
+  diveTo(el) {
+    const y = () => {
+      let v = 0, n = el;
+      while (n) { v += n.offsetTop; n = n.offsetParent; }
+      return Math.max(0, v - 78);
+    };
+    const land = () => {
+      if (this.sc) this.sc.scrollTop = y();
+      this.buildIn(el);
+    };
+    const last = this.kf ? this.kf.length - 1 : 5;
+    // já fora da sequência 3D: sem notebook para animar, vale a rolagem suave
+    if (!this.kf || !this.cur || this.fvis >= last - 0.12) { this.startGlide(y()); return; }
+    this.startJump(last, false, { pure: true, hold: true, after: land });
+    if (!this.jump) land();
+  }
+
+  startGlide(to) {
+    this.jump = null;
+    const from = this.sc ? this.sc.scrollTop : 0;
+    if (Math.abs(to - from) < 4) return;
+    this.glide = { t0: performance.now(), dur: Math.min(1250, 460 + Math.abs(to - from) * 0.28), from, to };
+  }
+
+  // remonta a seção de destino: some tudo e reconstrói em cascata
+  buildIn(el) {
+    const kids = Array.from(el.querySelectorAll('[data-reveal]'));
+    const list = kids.length ? kids : [el];
+    list.forEach((n) => {
+      if (this.io) this.io.unobserve(n);
+      n.style.transition = 'none';
+      n.style.opacity = '0';
+      n.style.transform = 'translateY(26px)';
+    });
+    void el.offsetHeight;
+    requestAnimationFrame(() => {
+      list.forEach((n, j) => {
+        const d = Math.min(560, j * 105) + 'ms';
+        n.style.transition = 'opacity .78s cubic-bezier(.2,.7,.2,1) ' + d + ', transform .78s cubic-bezier(.2,.7,.2,1) ' + d;
+        n.style.opacity = '1';
+        n.style.transform = 'none';
+      });
+    });
+  }
+
+  startJump(to, full, opts) {
+    const TAU = Math.PI * 2;
+    const fromF = this.fvis;
+    const span = Math.abs(to - fromF);
+    const sFrom = this.sc ? this.sc.scrollTop : 0;
+    const sTo = this.scrollForSection(to, full);
+    const o = opts || {};
+    if (span < 0.02 && Math.abs(sTo - sFrom) < 8 && !o.after) return;
+    // sempre pelo caminho mais curto até a pose alvo: o notebook precisa terminar reto,
+    // senão o rebase de ryBase desalinha toda a rotação guiada por scroll depois
+    let d = this.ryAt(to) - this.cur.ry;
+    d = ((d + Math.PI) % TAU + TAU) % TAU - Math.PI;
+    if (!o.pure && span >= 3) d += d <= 0 ? -TAU : TAU;
+    this.jump = {
+      t0: performance.now(),
+      dur: Math.min(2100, 640 + 300 * span),
+      from: Object.assign({}, this.cur),
+      fromF, to, dry: d,
+      arc: o.pure ? 0 : (span >= 1.4 ? Math.min(0.42, 0.15 * span) : 0.06),
+      lidDip: (!o.pure && span >= 2 && to !== 4 && Math.round(fromF) !== 5) ? 1 : 0,
+      pure: !!o.pure, hold: !!o.hold, snap: !!o.snap, after: o.after || null,
+      sFrom, sTo
+    };
+    this.build = null;
+    this.glide = null;
+    if (o.build) this.build = { i: to, t0: performance.now() + this.jump.dur * 0.5, dur: 980 };
+  }
+
+  // ---------- "entrar na tela": zoom através do display e redirecionar ----------
+  startEnter(a) {
+    if (!this.kf || !this.cur) { window.location.href = a.getAttribute('href'); return; }
+    const dark = a.dataset.mode === 'detail';
+    const SYS = {
+      igenda: { sec: 1, name: 'iGenda', glow: 'rgba(47,98,196,0.5)', prop: 'igendaUrl', dprop: 'igendaDetailUrl' },
+      mesaflow: { sec: 2, name: 'MesaFlow', glow: 'rgba(47,98,196,0.42)', prop: 'mesaflowUrl', dprop: 'mesaflowDetailUrl' },
+      iporte: { sec: 3, name: 'IPorte', glow: 'rgba(47,98,196,0.42)', prop: 'iporteUrl', dprop: 'iporteDetailUrl' }
+    };
+    const m = SYS[a.dataset.sys] || { sec: Math.max(1, Math.min(3, Math.round(this.fvis))), name: '', glow: 'rgba(47,98,196,0.5)' };
+    const key = dark ? m.dprop : m.prop;
+    const url = (key && this.props[key]) || a.getAttribute('href');
+    this.jump = null;
+    if (this.dive) { this.dive.style.transition = 'none'; this.dive.style.opacity = '0'; }
+    if (this.diveLabel) this.diveLabel.textContent = (dark ? 'Carregando ' : 'Abrindo ') + m.name;
+    if (this.diveGlow) this.diveGlow.style.background = dark
+      ? 'radial-gradient(115% 80% at 50% -10%, #0E1425 0%, #070A14 45%, #04060D 78%)'
+      : 'radial-gradient(58% 44% at 50% 50%, ' + m.glow + ', rgba(4,6,13,0) 74%)';
+    const TAU = Math.PI * 2;
+    this.enter = {
+      t0: performance.now(), dur: dark ? 1380 : 1280, url, sec: m.sec, nav: false, dark, fade: 0,
+      from: Object.assign({}, this.cur),
+      ry: Math.round(this.cur.ry / TAU) * TAU,
+      sLock: this.sc ? this.sc.scrollTop : 0
+    };
+  }
+
+  divePose(mul, ry) {
+    const s = this.kf[5].s * mul;
+    return { x: 0, y: 0.072 - this.SCY * s, z: -this.SCZ * s, rx: 0, ry, lid: Math.PI / 2, s };
+  }
+
+  ryAt(i) { return this.kf[i].ry + this.ryBase; }
+
+  // caixa do notebook projetada na tela, em px
+  projBox() {
+    const T = this.THREE, cam = this.camera;
+    const W = this.canvas.clientWidth || 1, H = this.canvas.clientHeight || 1;
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    const v = new T.Vector3();
+    this.nb.updateMatrixWorld(true);
+    this.nb.traverseVisible((o) => {
+      if (!o.geometry || o.userData.noFit) return;
+      if (!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+      const b = o.geometry.boundingBox;
+      for (let i = 0; i < 8; i++) {
+        v.set(i & 1 ? b.max.x : b.min.x, i & 2 ? b.max.y : b.min.y, i & 4 ? b.max.z : b.min.z);
+        o.localToWorld(v);
+        v.project(cam);
+        const sx = (v.x + 1) / 2 * W, sy = (1 - (v.y + 1) / 2) * H;
+        if (sx < x0) x0 = sx;
+        if (sx > x1) x1 = sx;
+        if (sy < y0) y0 = sy;
+        if (sy > y1) y1 = sy;
+      }
+    });
+    return { w: x1 - x0, h: y1 - y0, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 };
+  }
+
+  panelRect(i) {
+    const el = this.panels && this.panels[i];
+    if (!el || !this.canvas) return null;
+    const W = this.canvas.clientWidth || window.innerWidth, H = this.canvas.clientHeight || window.innerHeight;
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) return null;
+    const side = el.dataset.panel || (el.parentElement && getComputedStyle(el.parentElement).justifyContent === 'flex-end' ? 'right' : 'left');
+    const sp = Math.max(18, Math.min(56, W * 0.04));
+    const pt = i === 0 && !this.mobile ? 0 : Math.min(74, H * 0.095);
+    const pb = i === 0 && !this.mobile ? 0 : Math.min(32, H * 0.04);
+    const left = side === 'right' ? Math.max(sp, W - sp - r.width) : sp;
+    const top = this.mobile ? Math.max(pt, H - pb - r.height) : pt + Math.max(0, (H - pt - pb - r.height) / 2);
+    return { left, top, right: left + r.width, bottom: top + r.height };
+  }
+
+  fitRects(p) {
+    const W = this.canvas.clientWidth || window.innerWidth, H = this.canvas.clientHeight || window.innerHeight;
+    const g = this.mobile ? 10 : 22;
+    const pt = Math.min(74, H * 0.095) + 6, pb = Math.min(30, H * 0.04) + 6;
+    const pad = this.mobile ? 8 : 16;
+    const out = [];
+    const add = (x0, y0, x1, y1) => {
+      const w = x1 - x0, h = y1 - y0;
+      if (w > 80 && h > 80) out.push({ w, h, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 });
+    };
+    if (!p) { add(pad, pt, W - pad, H - pb); return out; }
+    add(pad, pt, p.left - g, H - pb);
+    add(p.right + g, pt, W - pad, H - pb);
+    add(pad, pt, W - pad, p.top - g);
+    add(pad, p.bottom + g, W - pad, H - pb);
+    return out;
+  }
+
+  fitPose(i, rect) {
+    const k = this.kf[i], nb = this.nb, lid = this.lid;
+    const sLid = lid.rotation.x, sPos = nb.position.clone(), sRot = nb.rotation.clone(), sScl = nb.scale.x;
+    const phoneVis = this.phone ? this.phone.visible : false;
+    const phoneScl = this.phone ? this.phone.scale.x : 1;
+    if (this.phone) {
+      this.phone.visible = i === 3;
+      this.phone.scale.setScalar(1);
+      this.phone.position.y = this.phoneY;
+    }
+    lid.rotation.x = Math.PI / 2 - k.lid;
+    nb.rotation.set(k.rx, k.ry, 0);
+    const wpp = (2 * (this.halfW || 0.394)) / (this.canvas.clientWidth || 1);
+    let s = 1, x = 0, y = 0.072, ok = true;
+    for (let it = 0; it < 8; it++) {
+      nb.scale.setScalar(s); nb.position.set(x, y, 0);
+      const b = this.projBox();
+      if (!(b.w > 0.5 && b.h > 0.5)) { ok = false; break; }
+      s *= Math.min((rect.w * 0.955) / b.w, (rect.h * 0.955) / b.h);
+      nb.scale.setScalar(s); nb.position.set(x, y, 0);
+      const c = this.projBox();
+      x += (rect.cx - c.cx) * wpp;
+      y -= (rect.cy - c.cy) * wpp;
+    }
+    if (ok) {
+      nb.scale.setScalar(s); nb.position.set(x, y, 0);
+      const b = this.projBox();
+      const f = Math.min(1, (rect.w * 0.985) / b.w, (rect.h * 0.985) / b.h);
+      if (f < 1) {
+        s *= f;
+        nb.scale.setScalar(s); nb.position.set(x, y, 0);
+        const c = this.projBox();
+        x += (rect.cx - c.cx) * wpp;
+        y -= (rect.cy - c.cy) * wpp;
+      }
+    }
+    lid.rotation.x = sLid; nb.position.copy(sPos); nb.rotation.copy(sRot); nb.scale.setScalar(sScl);
+    if (this.phone) { this.phone.visible = phoneVis; this.phone.scale.setScalar(phoneScl); }
+    return ok ? { s, x, y } : null;
+  }
+
+  layoutKeyframes() {
+    const T = this.THREE, hh = this.halfH || 0.233, hw = this.halfW || 0.394;
+    const SW = 0.302, SH = 0.189, LW = 0.324, LH = 0.2117;
+    for (let i = 0; i <= 3; i++) {
+      const k = this.kf[i];
+      k.x = k.xu * hw * 0.9;
+      if (!this.nb || !this.panels) continue;
+      let best = null;
+      this.fitRects(this.panelRect(i)).forEach((r) => {
+        const f = this.fitPose(i, r);
+        if (f && (!best || f.s > best.s)) best = f;
+      });
+      if (best) { k.s = best.s; k.x = best.x; k.y = best.y; k.z = 0; }
+    }
+    const k4 = this.kf[4];
+    k4.s = Math.max((hw * 2) / LW, (hh * 2) / LH) * 1.34;
+    const p4 = new T.Vector3(0, this.LCY, this.LCZ).multiplyScalar(k4.s)
+      .applyEuler(new T.Euler(k4.rx, -0.16, 0, 'XYZ'));
+    k4.y = 0.072 - p4.y; k4.z = -p4.z;
+    const k5 = this.kf[5];
+    k5.s = Math.max((hw * 2) / SW, (hh * 2) / SH) * 1.07;
+    const p5 = new T.Vector3(0, this.SCY, this.SCZ).multiplyScalar(k5.s);
+    k5.y = 0.072 - p5.y; k5.z = -p5.z;
+    k4.x = 0; k5.x = 0;
+  }
+
+  // cada seção pode ser mais alta que a tela: o notebook fica parado (f constante)
+  // durante o "hold" e só voa para a próxima no último 100vh da seção.
+  relayout() {
+    if (this.dead || !this.kf || !this.secEls) return;
+    this.layoutSections();
+    this.layoutKeyframes();
+  }
+
+  layoutSections() {
+    const W = window.innerWidth;
+    this.vh = window.innerHeight;
+    this.mobile = W < 900 || this.vh > W * 1.02;
+    (this.sticks || []).forEach((el) => { el.style.alignItems = this.mobile ? 'flex-end' : 'center'; });
+    const hero = this.secEls[0];
+    if (hero) {
+      hero.style.boxSizing = 'border-box';
+      hero.style.alignItems = this.mobile ? 'flex-end' : 'center';
+      hero.style.paddingTop = this.mobile ? 'min(74px, 9.5vh)' : '0px';
+      hero.style.paddingBottom = this.mobile ? 'min(32px, 4vh)' : '0px';
+    }
+    if (this.navLinks) this.navLinks.style.display = W < 880 ? 'none' : 'flex';
+    if (this.ctaLong) this.ctaLong.style.display = W < 620 ? 'none' : 'inline';
+    if (this.ctaShort) this.ctaShort.style.display = W < 620 ? 'inline' : 'none';
+    if (this.counter) this.counter.style.display = this.mobile ? 'none' : 'flex';
+    if (!this.fdescs) this.fdescs = Array.from(document.querySelectorAll('[data-fdesc]'));
+    const tight = W < 640;
+    this.fdescs.forEach((el) => { el.style.display = tight ? 'none' : 'block'; });
+    this.secTops = this.secEls.map((el) => {
+      let y = 0, n = el;
+      while (n) { y += n.offsetTop; n = n.offsetParent; }
+      return y;
+    });
+    this.secHs = this.secEls.map((el) => el.offsetHeight);
+  }
+
+  scrollForSection(i, full) {
+    const t = (this.secTops && this.secTops[i] != null) ? this.secTops[i] : i * window.innerHeight;
+    if (!full || !this.secHs || this.secHs[i] == null) return t;
+    // para no fim do "hold" da seção: a pose do notebook continua a mesma e todas as funcionalidades já apareceram
+    return t + Math.max(0, this.secHs[i] - (this.vh || window.innerHeight));
+  }
+
+  fFromScroll(top) {
+    const tops = this.secTops, hs = this.secHs;
+    if (!tops || !tops.length) return 0;
+    const vh = this.vh || window.innerHeight;
+    let i = 0;
+    while (i + 1 < tops.length && top >= tops[i + 1] - 1) i++;
+    const local = top - tops[i];
+    const hold = Math.max(0, hs[i] - vh);
+    if (local <= hold) return i;
+    return i + (local - hold) / vh;
+  }
+
+  buildPhone(THREE) {
+    const PW = 0.0742, PH = 0.1528, PT = 0.0094;
+    this.phoneMats = [];
+    const mk = (o) => {
+      const m = new THREE.MeshStandardMaterial(Object.assign({ transparent: true, opacity: 0 }, o));
+      this.phoneMats.push(m);
+      return m;
+    };
+    const g = new THREE.Group();
+    g.name = 'celular';
+    const body = new THREE.Mesh(this.roundedBox(THREE, PW, PH, PT, 0.0115), mk({ name: 'celular-titanio', color: '#3A3D45', roughness: 0.29, metalness: 0.96 }));
+    body.name = 'celular-corpo'; body.position.y = PH / 2; g.add(body);
+    const front = new THREE.Mesh(this.roundedBox(THREE, PW - 0.0018, PH - 0.0018, 0.0005, 0.0106), mk({ name: 'celular-vidro', color: '#04060D', roughness: 0.07, metalness: 0.45 }));
+    front.position.set(0, PH / 2, PT / 2 + 0.0002); g.add(front);
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(PW - 0.0074, PH - 0.0074), this.phoneScreenMat(THREE));
+    scr.name = 'celular-tela'; scr.position.set(0, PH / 2, PT / 2 + 0.0008); g.add(scr);
+    const notch = new THREE.Mesh(new THREE.PlaneGeometry(0.0192, 0.0044), mk({ name: 'celular-camera', color: '#020409', roughness: 0.4, metalness: 0 }));
+    notch.position.set(0, PH - 0.0112, PT / 2 + 0.0012); g.add(notch);
+    const btn = mk({ name: 'celular-botao', color: '#8A8D93', roughness: 0.2, metalness: 1 });
+    [[-1, PH * 0.795, 0.009], [-1, PH * 0.735, 0.0145], [1, PH * 0.755, 0.019]].forEach(([sx, y, h], i) => {
+      const b = new THREE.Mesh(new THREE.BoxGeometry(0.0013, h, PT * 0.5), btn);
+      b.name = 'celular-botao-' + (i + 1);
+      b.position.set(sx * (PW / 2 + 0.0003), y, 0);
+      g.add(b);
+    });
+    g.position.set(-0.10, -0.00625, 0.245);
+    g.rotation.set(-0.13, -0.52, 0.02);
+    g.visible = false;
+    this.phoneY = g.position.y;
+    this.phone = g;
+    this.nb.add(g);
+  }
+
+  phoneScreenMat(THREE) {
+    const cv = document.createElement('canvas');
+    cv.width = 540; cv.height = 1170;
+    this.phoneCv = cv;
+    this.paintPhone();
+    const t = new THREE.CanvasTexture(cv);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
+    const m = new THREE.MeshBasicMaterial({ name: 'celular-ui', map: t, toneMapped: false, transparent: true, opacity: 0 });
+    this.phoneMats.push(m);
+    return m;
+  }
+
+  paintPhone() {
+    const c = this.phoneCv.getContext('2d');
+    const T = '#2F62C4';
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, 540, 1170);
+    c.textBaseline = 'middle'; c.textAlign = 'left';
+    const bg = c.createLinearGradient(0, 0, 0, 1170);
+    bg.addColorStop(0, '#141C33'); bg.addColorStop(0.34, '#070A14'); bg.addColorStop(1, '#04060D');
+    c.fillStyle = bg; c.fillRect(0, 0, 540, 1170);
+    c.fillStyle = '#E8EAEE'; c.font = '600 23px "Space Grotesk", sans-serif'; c.fillText('9:41', 44, 48);
+    [9, 13, 17, 21].forEach((h, i) => { c.fillStyle = '#CDCED0'; c.fillRect(410 + i * 10, 56 - h, 6, h); });
+    c.strokeStyle = '#7A7B7F'; c.lineWidth = 2; c.strokeRect(464, 36, 32, 18);
+    c.fillStyle = '#CDCED0'; c.fillRect(467, 39, 21, 12);
+    c.fillStyle = T; this.rr(c, 44, 94, 46, 46, 13); c.fill();
+    c.fillStyle = '#070A14'; c.font = '600 23px "Space Grotesk", sans-serif'; c.fillText('iP', 57, 118);
+    c.fillStyle = '#E8EAEE'; c.font = '600 29px "Space Grotesk", sans-serif'; c.fillText('IPorte', 104, 108);
+    c.fillStyle = '#7A7B7F'; c.font = '400 18px "Space Grotesk", sans-serif'; c.fillText('Barbearia Nove · julho', 104, 137);
+    c.fillStyle = 'rgba(255,255,255,0.07)'; c.beginPath(); c.arc(473, 117, 23, 0, 7); c.fill();
+    c.fillStyle = 'rgba(255,255,255,0.045)'; this.rr(c, 44, 186, 452, 232, 26); c.fill();
+    c.strokeStyle = 'rgba(47,98,196,0.22)'; c.lineWidth = 2; c.stroke();
+    c.fillStyle = '#8A8D93'; c.font = '400 18px "Space Grotesk", sans-serif'; c.fillText('Saldo em caixa · hoje', 74, 226);
+    c.fillStyle = '#F2F3F5'; c.font = '600 52px "Space Grotesk", sans-serif'; c.fillText('R$ 148.320', 74, 276);
+    c.fillStyle = T; c.font = '500 19px "Space Grotesk", sans-serif'; c.fillText('▲ 12,4% vs. junho', 74, 318);
+    [0.34, 0.5, 0.42, 0.62, 0.55, 0.7, 0.64, 0.8, 0.73, 0.92].forEach((v, i) => {
+      const h = v * 56, x = 74 + i * 42, y = 394 - h;
+      const g2 = c.createLinearGradient(0, y, 0, 394);
+      g2.addColorStop(0, i === 9 ? T : 'rgba(47,98,196,0.5)');
+      g2.addColorStop(1, 'rgba(47,98,196,0.05)');
+      c.fillStyle = g2; this.rr(c, x, y, 25, h, 6); c.fill();
+    });
+    [['A receber', 'R$ 32.410', '18 títulos'], ['A pagar', 'R$ 19.780', '7 títulos']].forEach((t, i) => {
+      const x = 44 + i * 234;
+      c.fillStyle = 'rgba(255,255,255,0.04)'; this.rr(c, x, 444, 218, 118, 20); c.fill();
+      c.strokeStyle = 'rgba(255,255,255,0.08)'; c.lineWidth = 2; c.stroke();
+      c.fillStyle = '#7A7B7F'; c.font = '400 17px "Space Grotesk", sans-serif'; c.fillText(t[0], x + 24, 478);
+      c.fillStyle = '#E8EAEE'; c.font = '600 27px "Space Grotesk", sans-serif'; c.fillText(t[1], x + 24, 516);
+      c.fillStyle = '#5D5E60'; c.font = '400 15px "JetBrains Mono", monospace'; c.fillText(t[2], x + 24, 544);
+    });
+    c.fillStyle = 'rgba(47,98,196,0.1)'; this.rr(c, 44, 588, 452, 148, 22); c.fill();
+    c.strokeStyle = 'rgba(47,98,196,0.35)'; c.lineWidth = 2; c.stroke();
+    c.fillStyle = T; c.font = '500 15px "JetBrains Mono", monospace'; c.fillText('ALERTA NO CELULAR', 74, 624);
+    c.fillStyle = '#CDCED0'; c.font = '400 20px "Space Grotesk", sans-serif';
+    c.fillText('Dia 12 o saldo fica abaixo da', 74, 664);
+    c.fillText('reserva. Antecipar 3 recebíveis', 74, 696);
+    c.fillStyle = '#E8EAEE'; c.font = '600 23px "Space Grotesk", sans-serif'; c.fillText('Movimentações', 44, 782);
+    c.textAlign = 'right'; c.fillStyle = T; c.font = '400 17px "Space Grotesk", sans-serif'; c.fillText('ver tudo', 496, 782); c.textAlign = 'left';
+    [['Recebimento cartão', '+ R$ 1.240,00', 'hoje, 14:02'], ['Fornecedor Duarte', '− R$ 480,00', 'hoje, 09:20'], ['Pix recebido', '+ R$ 320,00', 'ontem']].forEach((t, i) => {
+      const y = 814 + i * 84;
+      c.fillStyle = 'rgba(255,255,255,0.035)'; this.rr(c, 44, y, 452, 72, 18); c.fill();
+      const up = t[1][0] === '+';
+      c.fillStyle = up ? 'rgba(47,98,196,0.16)' : 'rgba(255,255,255,0.06)'; this.rr(c, 64, y + 17, 38, 38, 12); c.fill();
+      c.fillStyle = up ? T : '#8A8D93'; c.font = '600 19px "Space Grotesk", sans-serif'; c.fillText(up ? '↑' : '↓', 78, y + 37);
+      c.fillStyle = '#DEDFE1'; c.font = '400 20px "Space Grotesk", sans-serif'; c.fillText(t[0], 118, y + 28);
+      c.fillStyle = '#7A7B7F'; c.font = '400 15px "Space Grotesk", sans-serif'; c.fillText(t[2], 118, y + 52);
+      c.textAlign = 'right'; c.fillStyle = up ? '#7BA5EE' : '#CDCED0'; c.font = '600 20px "Space Grotesk", sans-serif';
+      c.fillText(t[1], 476, y + 40); c.textAlign = 'left';
+    });
+    c.fillStyle = 'rgba(4,6,13,0.94)'; c.fillRect(0, 1072, 540, 98);
+    c.fillStyle = 'rgba(255,255,255,0.08)'; c.fillRect(0, 1072, 540, 1);
+    c.textAlign = 'center';
+    ['Início', 'Contas', 'Fluxo', 'Mais'].forEach((t, i) => {
+      const x = 68 + i * 135;
+      c.fillStyle = i === 0 ? T : '#5D5E60';
+      this.rr(c, x - 11, 1100, 22, 22, 7); c.fill();
+      c.font = '400 15px "Space Grotesk", sans-serif'; c.fillText(t, x, 1140);
+    });
+    c.fillStyle = 'rgba(255,255,255,0.28)'; this.rr(c, 225, 1156, 90, 5, 3); c.fill();
+    c.textAlign = 'left';
+    if (this.phoneTexRef) this.phoneTexRef.needsUpdate = true;
+  }
+
+  scroller() {
+    let n = this.canvas && this.canvas.parentElement;
+    while (n) {
+      if (n.scrollHeight > n.clientHeight + 4) {
+        const ov = getComputedStyle(n).overflowY;
+        if (ov === 'auto' || ov === 'scroll' || ov === 'overlay' || n === document.scrollingElement) return n;
+      }
+      n = n.parentElement;
+    }
+    return document.scrollingElement || document.documentElement;
+  }
+
+  loop = () => {
+    if (this.dead) return;
+    requestAnimationFrame(this.loop);
+    if (this.frame++ % 24 === 0 || !this.sc) this.sc = this.scroller();
+    if (this.glide && this.sc) {
+      const G = this.glide;
+      const ge = Math.max(0, Math.min(1, (performance.now() - G.t0) / G.dur));
+      const gz = ge < 0.5 ? 4 * ge * ge * ge : 1 - Math.pow(-2 * ge + 2, 3) / 2;
+      this.sc.scrollTop = G.from + (G.to - G.from) * gz;
+      if (ge >= 1) this.glide = null;
+    }
+    const top = this.sc.scrollTop || 0;
+    if (!this.secTops) this.layoutSections();
+    if (this.canvas.clientHeight && Math.abs(this.canvas.clientHeight - this.renderer.domElement.height / (this.renderer.getPixelRatio())) > 2) this.onResize();
+    const amp = this.props.motionAmount ?? 1;
+    const off = (this.halfW || 0.35) * 0.9;
+    const J = this.jump;
+    let f, tx, ty2, tz2, try_, trx, tlid, ts, brightOverride = null, screenAt = null;
+    const raw01 = window.__druvePreview != null ? window.__druvePreview : this.fFromScroll(top);
+
+    const E = this.enter;
+    if (E) {
+      const raw = Math.max(0, Math.min(1, (performance.now() - E.t0) / E.dur));
+      if (this.sc) this.sc.scrollTop = E.sLock;
+      const a0 = Math.min(1, raw / 0.4);
+      const al = a0 * a0 * (3 - 2 * a0);
+      const z0 = Math.max(0, (raw - 0.28) / 0.72);
+      const d = this.divePose(1 + 7.5 * Math.pow(z0, 3), E.ry);
+      const p = E.from;
+      tx = p.x + (d.x - p.x) * al;
+      ty2 = p.y + (d.y - p.y) * al;
+      tz2 = p.z + (d.z - p.z) * al;
+      ts = p.s + (d.s - p.s) * al;
+      try_ = p.ry + (d.ry - p.ry) * al;
+      trx = p.rx + (d.rx - p.rx) * al;
+      tlid = p.lid + (d.lid - p.lid) * Math.min(1, al * 1.3);
+      f = E.sec + (5 - E.sec) * al;
+      screenAt = E.sec;
+      if (E.dark) {
+        // a tela escurece e o 3D se dissolve no fundo do site, como na cena 06
+        brightOverride = Math.max(0.015, 0.55 * (1 - Math.pow(Math.min(1, raw / 0.82), 1.5)));
+        E.fade = Math.max(0, Math.min(1, (raw - 0.5) / 0.42));
+        if (this.dive) this.dive.style.opacity = Math.pow(Math.max(0, (raw - 0.42) / 0.5), 1.15).toFixed(3);
+      } else {
+        brightOverride = Math.min(1.3, 0.45 + 1.1 * raw);
+        if (this.dive) this.dive.style.opacity = Math.pow(Math.max(0, (raw - 0.55) / 0.45), 1.35).toFixed(3);
+      }
+      if (raw >= 1 && !E.nav) {
+        E.nav = true;
+        window.location.href = E.url;
+        // se a navegação for bloqueada (preview em iframe), volta ao site em vez de travar coberto
+        setTimeout(() => {
+          if (this.dead || !this.enter) return;
+          this.enter = null;
+          if (this.dive) { this.dive.style.transition = 'opacity .5s ease'; this.dive.style.opacity = '0'; }
+        }, 1500);
+      }
+    } else if (J) {
+      const e = Math.max(0, Math.min(1, (performance.now() - J.t0) / J.dur));
+      const ez = e < 0.5 ? 4 * e * e * e : 1 - Math.pow(-2 * e + 2, 3) / 2;
+      f = J.fromF + (J.to - J.fromF) * ez;
+      // salto de navegação: nada de rolar o conteúdo na frente do usuário
+      if (this.sc) this.sc.scrollTop = J.hold ? J.sFrom : (J.snap ? J.sTo : J.sFrom + (J.sTo - J.sFrom) * ez);
+      const g = this.kf[J.to], p = J.from;
+      const bell = Math.sin(ez * Math.PI);
+      const m = 1 - J.arc * bell;
+      const gx = g.x * (0.6 + 0.4 * amp);
+      tx = p.x + (gx - p.x) * ez;
+      ty2 = p.y + (g.y - p.y) * ez;
+      tz2 = p.z + (g.z - p.z) * ez;
+      ts = p.s + (g.s - p.s) * ez;
+      ts *= m; ty2 = 0.072 - (0.072 - ty2) * m; tz2 *= m;
+      try_ = p.ry + J.dry * ez;
+      trx = p.rx + (g.rx - p.rx) * ez;
+      tlid = J.lidDip
+        ? (ez < 0.5 ? p.lid + (0.12 - p.lid) * (ez * 2) : 0.12 + (g.lid - 0.12) * ((ez - 0.5) * 2))
+        : p.lid + (g.lid - p.lid) * ez;
+      brightOverride = Math.max(0.05, Math.abs(2 * ez - 1));
+      screenAt = ez < 0.5 ? Math.round(J.fromF) : J.to;
+      if (e >= 1) {
+        this.ryBase = try_ - this.kf[J.to].ry;
+        this.jump = null;
+        if (J.after) J.after();
+      }
+    } else {
+      f = Math.max(0, Math.min(this.kf.length - 1, raw01));
+      const i0 = Math.floor(f), i1 = Math.min(this.kf.length - 1, i0 + 1);
+      const raw = f - i0, t = raw * raw * (3 - 2 * raw);
+      const a = this.kf[i0], b = this.kf[i1];
+      const L = (p, q) => p + (q - p) * t;
+      tx = L(a.x, b.x) * (0.6 + 0.4 * amp);
+      const ty = L(a.y, b.y), tz = L(a.z, b.z);
+      try_ = this.ryAt(i0) + (this.ryAt(i1) - this.ryAt(i0)) * t;
+      trx = L(a.rx, b.rx);
+      const tl = i0 === 3 ? Math.min(1, t * 2.15) : t;
+      tlid = a.lid + (b.lid - a.lid) * tl;
+      ts = L(a.s, b.s); ty2 = ty; tz2 = tz;
+      if (f > 4) {
+        const m = 1 - 0.62 * Math.sin(Math.min(1, f - 4) * Math.PI);
+        ts *= m; ty2 = 0.072 - (0.072 - ty) * m; tz2 *= m;
+      }
+    }
+    this.fvis = f;
+
+    if (!this.cur) this.cur = { x: tx, y: ty2, z: tz2, ry: try_, rx: trx, lid: tlid, s: ts, mx: 0, my: 0 };
+    const c = this.cur, k = E ? 0.82 : J ? 0.4 : 0.11;
+    c.x += (tx - c.x) * k; c.y += (ty2 - c.y) * k; c.z += (tz2 - c.z) * k;
+    c.ry += (try_ - c.ry) * k; c.rx += (trx - c.rx) * k;
+    c.lid += (tlid - c.lid) * k; c.s += (ts - c.s) * k;
+    const par = (this.props.pointerParallax === false ? 0 : 1) * (1 - Math.max(0, Math.min(1, (f - 4.2) / 0.7)));
+    c.mx += (this.mouse.x * par - c.mx) * 0.05;
+    c.my += (this.mouse.y * par - c.my) * 0.05;
+
+    this.nb.position.set(c.x, c.y, c.z);
+    this.nb.rotation.set(c.rx, c.ry, 0);
+    this.nb.scale.setScalar(c.s);
+    this.rig.rotation.y = c.mx * 0.09;
+    this.rig.rotation.x = c.my * 0.05;
+    this.lid.rotation.x = Math.PI / 2 - c.lid;
+
+    if (this.phone) {
+      const pv0 = Math.max(0, Math.min(1, (f - 2.56) / 0.34)) * Math.max(0, Math.min(1, (3.38 - f) / 0.42));
+      const pv = pv0 * pv0 * (3 - 2 * pv0);
+      this.phone.visible = pv > 0.012;
+      if (this.phone.visible) {
+        this.phone.scale.setScalar(0.93 + 0.07 * pv);
+        this.phone.position.y = this.phoneY - (1 - pv) * 0.028;
+        this.phone.rotation.z = 0.02 + (1 - pv) * 0.07;
+        this.phoneMats.forEach((m) => { m.opacity = pv; });
+      }
+    }
+
+    const near = screenAt != null ? screenAt : Math.round(f);
+    const idx = this.screenMap[near];
+
+    if (idx !== this.screenIdx) {
+      this.screenIdx = idx;
+      this.screenMat.map = this.screenTextures[idx];
+      this.screenMat.needsUpdate = true;
+      if (this.video) {
+        this.wantVideo = this.screenTextures[idx] === this.videoTex;
+        if (this.wantVideo) { const p = this.video.play(); if (p && p.catch) p.catch(() => {}); }
+        else this.video.pause();
+      }
+    }
+    const dist = Math.abs(f - near);
+    const bright = (brightOverride != null ? brightOverride : Math.max(0.05, Math.min(1, 1 - dist * 2.5))) * (near === 4 ? 0.25 : 1);
+    const onVid = this.videoTex && this.screenTextures[idx] === this.videoTex;
+    if (this.punch) this.punch.value = onVid ? 1 : 0;
+    this.screenMat.color.setScalar(bright * (onVid ? 1.12 : 1));
+    this.spill.color.setHex(this.tints[near]);
+    this.spill.intensity = 0.55 * bright;
+    this.spill.position.set(c.x, c.y + 0.05, c.z + 0.05);
+
+    this.secEls.forEach((el, i) => {
+      const d = Math.abs(f - i);
+      const o = Math.max(0, Math.min(1, 1.25 - d * 1.9));
+      el.style.opacity = o.toFixed(3);
+      el.style.transform = 'translateY(' + ((f - i) * 26).toFixed(1) + 'px)';
+      el.style.pointerEvents = o > 0.6 ? 'auto' : 'none';
+    });
+    if (this.fcards) this.fcards.forEach((cards, i) => {
+      const n = cards.length;
+      if (!n) return;
+      const hold = Math.max(1, this.secHs[i] - this.vh);
+      let p = Math.max(0, Math.min(1, (top - this.secTops[i]) / hold));
+      if (this.build && this.build.i === i) {
+        const b = Math.max(0, Math.min(1, (performance.now() - this.build.t0) / this.build.dur));
+        p = b * b * (3 - 2 * b);
+        if (b >= 1) this.build = null;
+      }
+      cards.forEach((el, j) => {
+        const o = Math.max(0, Math.min(1, p * (n - 0.6) + 1.4 - j));
+        const e = o * o * (3 - 2 * o);
+        if (el._e != null && Math.abs(el._e - e) < 0.004) return;
+        el._e = e;
+        el.style.opacity = (0.05 + 0.95 * e).toFixed(3);
+        el.style.transform = 'translateY(' + ((1 - e) * 24).toFixed(1) + 'px)';
+      });
+      const bar = this.fbars[i];
+      if (bar) bar.style.width = (Math.min(1, p * 1.04) * 100).toFixed(1) + '%';
+      const cnt = this.fcounts[i];
+      if (cnt) {
+        const k = Math.max(1, Math.min(n, Math.round(p * (n - 0.6) + 1.4)));
+        if (cnt._k !== k) { cnt._k = k; cnt.textContent = String(k).padStart(2, '0') + '/' + String(n).padStart(2, '0'); }
+      }
+    });
+    if (this.num) this.num.textContent = String(Math.min(5, near) + 1).padStart(2, '0');
+
+    // contorno de progresso do card da seção 5
+    if (this.rings && this.rings.length && this.secTops && this.secHs) {
+      const hold4 = Math.max(1, this.secHs[4] - this.vh);
+      const p4 = Math.max(0, Math.min(1, (top - this.secTops[4]) / hold4));
+      const deg = Math.round(p4 * 360) / 2;
+      if (this._ringDeg !== deg) {
+        this._ringDeg = deg;
+        const d = deg.toFixed(1), m = (360 - deg).toFixed(1), mid = (deg * 0.5).toFixed(1), mid2 = (360 - deg * 0.5).toFixed(1);
+        const A = 'rgba(123,165,238,0.95)', B = '#4A80E0', C = '#2F62C4', N = 'rgba(47,98,196,0)';
+        const g = 'conic-gradient(from 0deg, ' + A + ' 0deg, ' + B + ' ' + mid + 'deg, ' + C + ' ' + d + 'deg, ' + N + ' ' + d + 'deg, ' + N + ' ' + m + 'deg, ' + C + ' ' + m + 'deg, ' + B + ' ' + mid2 + 'deg, ' + A + ' 360deg)';
+        this.rings.forEach((r) => { r.style.background = g; });
+      }
+    }
+
+    this.scene.environmentIntensity = 0.78 + 0.7 * Math.max(0, 1 - Math.abs(f - 4) * 1.7);
+
+    // past the sequence the 3D dissolves into the page background
+    const outro = Math.max(0, Math.min(1, (raw01 - 5.05) / 0.55));
+    const wantDim = (1 - 0.42 * Math.max(0, 1 - Math.abs(f - 4) * 1.6)) * (1 - outro) * (E && E.dark ? 1 - E.fade : 1);
+    c.dim = c.dim == null ? wantDim : c.dim + (wantDim - c.dim) * 0.09;
+    this.canvas.style.opacity = c.dim.toFixed(3);
+    if (this.counter) this.counter.style.opacity = (1 - outro).toFixed(3);
+
+
+    this.renderer.render(this.scene, this.camera);
+  };
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+/* DRUVE — superfícies metálicas, sombra, movimento
+   O metal é feito de GRADIENTE + hairline + realce interno no topo.
+   Nunca usar brilho colorido, glow neon ou gradiente roxo/violeta. */
+:root {
+  /* prata escovada — botões, chips, faixas de rodapé */
+  --metal-brushed: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%);
+  /* prata sutil sobre fundo escuro — bordas e divisores */
+  --metal-edge: linear-gradient(90deg, rgba(207,211,218,0) 0%, rgba(207,211,218,0.5) 45%, rgba(207,211,218,0.12) 100%);
+  /* aço escuro — superfície de card elevado */
+  --metal-dark: linear-gradient(165deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.015) 38%, rgba(4,6,13,0.4) 100%);
+  /* mármore azul+prata — apenas em fundos de seção grandes, sempre com máscara */
+  --marble-blue: radial-gradient(120% 90% at 20% 0%, rgba(47,98,196,0.28), rgba(4,6,13,0) 62%),
+                 radial-gradient(90% 70% at 90% 100%, rgba(207,211,218,0.12), rgba(4,6,13,0) 60%);
+
+  /* bisel: realce no topo + sombra projetada curta */
+  --bevel-top: inset 0 1px 0 rgba(255,255,255,0.16);
+  --bevel-metal: inset 0 1px 0 rgba(255,255,255,0.75), inset 0 -1px 0 rgba(0,0,0,0.22);
+
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-2: 0 8px 24px -12px rgba(0,0,0,0.7);
+  --shadow-3: 0 24px 60px -28px rgba(0,0,0,0.85);
+  --shadow-metal: 0 10px 26px -14px rgba(0,0,0,0.75);
+
+  --blur-glass: blur(18px) saturate(120%);
+
+  /* movimento: curto, mecânico, sem bounce */
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-inout: cubic-bezier(0.65, 0.05, 0.36, 1);
+  --dur-fast: 140ms;
+  --dur-base: 240ms;
+  --dur-slow: 520ms;
+}

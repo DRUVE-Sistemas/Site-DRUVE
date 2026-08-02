@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+<style>
+  html, body { margin: 0; padding: 0; background: #04060D; }
+  * { box-sizing: border-box; }
+  a { color: #7BA5EE; text-decoration: none; }
+  a:hover { color: #A9C4F4; }
+  ::selection { background: rgba(47,98,196,0.4); }
+  @keyframes druveSheen { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+  @keyframes druveReveal { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</helmet>
+
+<div style="background: #04060D; color: #E8EAEE; font-family: 'Space Grotesk', system-ui, sans-serif; min-height: 100vh; padding: 0 clamp(20px, 4vw, 56px) 120px">
+
+  <div style="position: fixed; inset: 0; pointer-events: none; background: radial-gradient(120% 80% at 18% -5%, rgba(47,98,196,0.20), rgba(4,6,13,0) 60%), radial-gradient(80% 60% at 95% 8%, rgba(207,211,218,0.07), rgba(4,6,13,0) 55%)"></div>
+
+  <div style="position: relative; max-width: 1240px; margin: 0 auto">
+
+    <header style="display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; flex-wrap: wrap; padding: clamp(56px, 10vh, 104px) 0 clamp(32px, 5vh, 56px)">
+      <div style="display: flex; flex-direction: column; gap: 20px; max-width: 640px">
+        <div style="display: flex; align-items: center; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #7A7B7F">
+          <span style="width: 22px; height: 1px; background: linear-gradient(90deg, rgba(207,211,218,0.6), rgba(207,211,218,0))"></span>
+          <span>Design System · v1</span>
+        </div>
+        <h1 style="margin: 0; font-size: clamp(38px, 6vw, 64px); line-height: 1.02; letter-spacing: -0.04em; font-weight: 500; text-wrap: balance">
+          Azul-noite e<br /><span style="background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: druveSheen 9s linear infinite">metálico</span>
+        </h1>
+        <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #A7A8AC; max-width: 54ch; text-wrap: pretty">Linguagem visual da DRUVE. Duas famílias de cor, uma receita de metal, tipografia geométrica e muito ar. Sóbrio por decisão: o produto é o assunto, não a interface.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px; width: 280px; max-width: 100%; flex: 0 0 auto">
+        <div style="border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: linear-gradient(165deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.015) 38%, rgba(4,6,13,0.4) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 24px 60px -28px rgba(0,0,0,0.85); padding: 26px 24px; display: flex; flex-direction: column; gap: 16px">
+          <div role="img" aria-label="DRUVE" style="width: 100%; aspect-ratio: 1600 / 328; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-mask-image: url('./design-system/assets/druve-wordmark.svg'); mask-image: url('./design-system/assets/druve-wordmark.svg'); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain"></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 7.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #8A8D93; display: flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap"><span style="color: #5D5E60">&lt;</span><span>Desenvolvimento de software</span><span style="color: #5D5E60">/&gt;</span></div>
+          <div style="height: 1px; background: linear-gradient(90deg, rgba(207,211,218,0) 0%, rgba(207,211,218,0.5) 45%, rgba(207,211,218,0.12) 100%)"></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #5D5E60; line-height: 1.9">Contagem / MG<br />druve.com.br</div>
+        </div>
+      </div>
+    </header>
+
+
+    <section data-screen-label="Marca" style="padding: clamp(48px, 8vh, 96px) 0; border-top: 1px solid rgba(255,255,255,0.09)">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; color: #2F62C4">01</span>
+        <h2 style="margin: 0; font-size: clamp(26px, 3.2vw, 32px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 500">Marca</h2>
+        <span style="flex: 1; height: 1px; background: rgba(255,255,255,0.09)"></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F; color: #5D5E60">Wordmark vetorial + assinatura</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
+        <div style="grid-column: 1 / -1; padding: clamp(32px, 6vw, 64px) clamp(28px, 5vw, 72px); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: radial-gradient(120% 90% at 20% 0%, rgba(47,98,196,0.18), rgba(4,6,13,0) 62%), #070A14; display: flex; flex-direction: column; align-items: center; gap: 20px">
+          <div role="img" aria-label="DRUVE" style="width: min(560px, 100%); aspect-ratio: 1600 / 328; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-mask-image: url('./design-system/assets/druve-wordmark.svg'); mask-image: url('./design-system/assets/druve-wordmark.svg'); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain"></div>
+          <div style="display: flex; align-items: center; gap: 14px; font-family: 'JetBrains Mono', monospace; font-size: clamp(8px, 1.1vw, 10.5px); letter-spacing: 0.24em; text-transform: uppercase; color: #A7A8AC"><span style="color: #5D5E60">&lt;</span><span>Desenvolvimento de software</span><span style="color: #5D5E60">/&gt;</span></div>
+        </div>
+
+        <div style="padding: 28px 24px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 20px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Metal · uso padrão</div>
+          <div role="img" aria-label="DRUVE" style="width: 100%; aspect-ratio: 1600 / 328; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-mask-image: url('./design-system/assets/druve-wordmark.svg'); mask-image: url('./design-system/assets/druve-wordmark.svg'); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain"></div>
+          <div style="font-size: 13px; line-height: 1.5; color: #8A8D93">Sobre azul-noite. Gradiente a 168°, igual ao botão primário.</div>
+        </div>
+
+        <div style="padding: 28px 24px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 20px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Prata sólida · 1 cor</div>
+          <div role="img" aria-label="DRUVE" style="width: 100%; aspect-ratio: 1600 / 328; background: #CDCED0; -webkit-mask-image: url('./design-system/assets/druve-wordmark.svg'); mask-image: url('./design-system/assets/druve-wordmark.svg'); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain"></div>
+          <div style="font-size: 13px; line-height: 1.5; color: #8A8D93">Quando o metal não sobrevive: favicon, e-mail, impressão em 1 cor.</div>
+        </div>
+
+        <div style="padding: 28px 24px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: #F2F3F5; display: flex; flex-direction: column; gap: 20px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Fundo claro · ink-900</div>
+          <div role="img" aria-label="DRUVE" style="width: 100%; aspect-ratio: 1600 / 328; background: #070A14; -webkit-mask-image: url('./design-system/assets/druve-wordmark.svg'); mask-image: url('./design-system/assets/druve-wordmark.svg'); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain"></div>
+          <div style="font-size: 13px; line-height: 1.5; color: #5D5E60">Nunca cinza médio sobre claro — só azul-noite cheio.</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px">
+        <div style="padding: 24px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 16px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Área de proteção e mínimo</div>
+          <div style="padding: 26px; border: 1px dashed rgba(255,255,255,0.16); border-radius: 6px; display: grid; place-items: center"><div role="img" aria-label="DRUVE" style="width: 132px; aspect-ratio: 1600 / 328; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); -webkit-mask-image: url('./design-system/assets/druve-wordmark.svg'); mask-image: url('./design-system/assets/druve-wordmark.svg'); -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; -webkit-mask-size: contain; mask-size: contain"></div></div>
+          <div style="font-size: 13px; line-height: 1.5; color: #8A8D93">Respiro mínimo em todos os lados = altura do <span style="color: #E8EAEE">D</span>. Largura mínima de aplicação: 108px em tela, 24mm em impressão.</div>
+        </div>
+        <div style="padding: 24px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 12px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Não fazer</div>
+          <div style="font-size: 13.5px; line-height: 1.85; color: #A7A8AC">Recolorir em azul royal ou qualquer matiz<br />Aplicar sombra, contorno ou glow<br />Distorcer, inclinar ou condensar<br />Sobrepor a imagem sem máscara escura<br />Redesenhar a tagline em outra fonte</div>
+        </div>
+        <div style="padding: 24px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 12px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Arquivos</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 2; color: #A7A8AC">druve-wordmark.svg<br />druve-lockup.jpg<br />assinatura-email.jpg</div>
+          <div style="font-size: 13px; line-height: 1.5; color: #5D5E60">O SVG usa <span style="font-family: 'JetBrains Mono', monospace">currentColor</span> — aplique metal por máscara CSS, não por recolorização do path.</div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="Cor" style="padding: clamp(48px, 8vh, 96px) 0; border-top: 1px solid rgba(255,255,255,0.09)">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; color: #2F62C4">02</span>
+        <h2 style="margin: 0; font-size: clamp(26px, 3.2vw, 32px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 500">Cor</h2>
+        <span style="flex: 1; height: 1px; background: rgba(255,255,255,0.09)"></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #5D5E60">Duas famílias + 1 acento</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px">
+
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Azul-noite · superfícies</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px">
+            <div style="height: 76px; border-radius: 4px; background: #04060D; border: 1px solid rgba(255,255,255,0.09)"></div>
+            <div style="height: 76px; border-radius: 4px; background: #070A14; border: 1px solid rgba(255,255,255,0.07)"></div>
+            <div style="height: 76px; border-radius: 4px; background: #0E1425; border: 1px solid rgba(255,255,255,0.05)"></div>
+            <div style="height: 76px; border-radius: 4px; background: #141C33"></div>
+            <div style="height: 76px; border-radius: 4px; background: #263056"></div>
+            <div style="height: 76px; border-radius: 4px; background: #45568A"></div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.04em; color: #5D5E60">
+            <span>ink-950</span><span>ink-900</span><span>ink-800</span><span>ink-700</span><span>navy-500</span><span>navy-300</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Prata · texto e hairline</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px">
+            <div style="height: 76px; border-radius: 4px; background: #F2F3F5"></div>
+            <div style="height: 76px; border-radius: 4px; background: #CDCED0"></div>
+            <div style="height: 76px; border-radius: 4px; background: #A7A8AC"></div>
+            <div style="height: 76px; border-radius: 4px; background: #8A8D93"></div>
+            <div style="height: 76px; border-radius: 4px; background: #5D5E60"></div>
+            <div style="height: 76px; border-radius: 4px; background: #3A3D45"></div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.04em; color: #5D5E60">
+            <span>steel-050</span><span>steel-200</span><span>steel-400</span><span>steel-500</span><span>steel-700</span><span>steel-800</span>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Acento azul · máx. 5% da tela</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px">
+            <div style="height: 76px; border-radius: 4px; background: #2F62C4"></div>
+            <div style="height: 76px; border-radius: 4px; background: #4A80E0"></div>
+            <div style="height: 76px; border-radius: 4px; background: #7BA5EE"></div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.04em; color: #5D5E60">
+            <span>blue-500</span><span>blue-400</span><span>blue-300</span>
+          </div>
+          <div style="margin-top: 8px; padding: 14px 16px; border: 1px solid rgba(255,255,255,0.09); border-radius: 6px; background: rgba(255,255,255,0.028); font-size: 13px; line-height: 1.55; color: #A7A8AC">Acento entra em foco, link, estado ativo e um número em destaque. Nunca como fundo de seção. <strong style="color: #E8EAEE; font-weight: 500">Sem cor por produto</strong> — iGenda, MesaFlow e IPorte se distinguem por número e tipografia.</div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="Metal" style="padding: clamp(48px, 8vh, 96px) 0; border-top: 1px solid rgba(255,255,255,0.09)">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; color: #2F62C4">03</span>
+        <h2 style="margin: 0; font-size: clamp(26px, 3.2vw, 32px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 500">Metal</h2>
+        <span style="flex: 1; height: 1px; background: rgba(255,255,255,0.09)"></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #5D5E60">Gradiente + hairline + bisel</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
+        <div style="border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.09)">
+          <div style="height: 130px; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), inset 0 -1px 0 rgba(0,0,0,0.22)"></div>
+          <div style="padding: 16px 18px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 6px">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">metal-brushed</div>
+            <div style="font-size: 13px; line-height: 1.5; color: #A7A8AC">Prata escovada a 168°. Botão primário, chips de dado, faixa de remate.</div>
+          </div>
+        </div>
+
+        <div style="border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.09)">
+          <div style="height: 130px; background: linear-gradient(165deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.015) 38%, rgba(4,6,13,0.4) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16)"></div>
+          <div style="padding: 16px 18px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 6px">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">metal-dark</div>
+            <div style="font-size: 13px; line-height: 1.5; color: #A7A8AC">Aço anodizado: branco a 7% no topo, preto no pé. Card e painel elevado.</div>
+          </div>
+        </div>
+
+        <div style="border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.09)">
+          <div style="height: 130px; background: radial-gradient(120% 90% at 20% 0%, rgba(47,98,196,0.28), rgba(4,6,13,0) 62%), radial-gradient(90% 70% at 90% 100%, rgba(207,211,218,0.12), rgba(4,6,13,0) 60%), #070A14"></div>
+          <div style="padding: 16px 18px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 6px">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">marble-blue</div>
+            <div style="font-size: 13px; line-height: 1.5; color: #A7A8AC">Único fundo atmosférico permitido. Sempre mascarado, opacidade ≤ 18%.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 14px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Divisores</div>
+        <div style="height: 1px; background: rgba(255,255,255,0.09)"></div>
+        <div style="height: 1px; background: linear-gradient(90deg, rgba(207,211,218,0) 0%, rgba(207,211,218,0.5) 45%, rgba(207,211,218,0.12) 100%)"></div>
+        <div style="height: 3px; border-radius: 2px; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); opacity: 0.85"></div>
+      </div>
+    </section>
+
+    <section data-screen-label="Tipografia" style="padding: clamp(48px, 8vh, 96px) 0; border-top: 1px solid rgba(255,255,255,0.09)">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; color: #2F62C4">04</span>
+        <h2 style="margin: 0; font-size: clamp(26px, 3.2vw, 32px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 500">Tipografia</h2>
+        <span style="flex: 1; height: 1px; background: rgba(255,255,255,0.09)"></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #5D5E60">Space Grotesk + JetBrains Mono</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr); gap: 40px; align-items: start">
+        <div style="display: flex; flex-direction: column; gap: 26px">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.14em; color: #5D5E60">HERO · 64/1.02 · -0.04em · 500</div>
+            <div style="font-size: clamp(34px, 5vw, 64px); line-height: 1.02; letter-spacing: -0.04em; font-weight: 500">Software que fecha o mês</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.14em; color: #5D5E60">H1 · 44/1.06 · -0.035em · 500</div>
+            <div style="font-size: clamp(28px, 3.6vw, 44px); line-height: 1.06; letter-spacing: -0.035em; font-weight: 500">Três sistemas, uma engenharia</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.14em; color: #5D5E60">H3 · 22/1.2 · -0.02em · 500</div>
+            <div style="font-size: 22px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 500">Agendamento, PDV e financeiro</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.14em; color: #5D5E60">CORPO · 15/1.55 · steel-400</div>
+            <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #A7A8AC; max-width: 62ch; text-wrap: pretty">O cliente marca pelo link, você confirma no painel e o pagamento entra no caixa do dia. Sem planilha paralela, sem agenda no caderno, sem retrabalho no fim do mês. Corpo de texto nunca em branco puro — prata a 65% de luz mantém a página calma.</p>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 18px; padding: 26px 24px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: linear-gradient(165deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.015) 38%, rgba(4,6,13,0.4) 100%)">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.14em; color: #5D5E60">LABEL MONO · 0.22em · o motivo da marca</div>
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #CDCED0">Desenvolvimento de software</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #7A7B7F">Diretor executivo</div>
+            <div style="height: 1px; background: linear-gradient(90deg, rgba(207,211,218,0.5), rgba(207,211,218,0))"></div>
+            <div style="display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F"><span style="color: #4A80E0">01</span><span style="width: 28px; height: 1px; background: rgba(255,255,255,0.16)"></span><span>06</span></div>
+          </div>
+          <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #8A8D93">Eyebrow, contador, metadado e rótulo de eixo. Sempre 1–3 palavras. Nunca frase inteira em caixa alta.</p>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="Componentes" style="padding: clamp(48px, 8vh, 96px) 0; border-top: 1px solid rgba(255,255,255,0.09)">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; color: #2F62C4">05</span>
+        <h2 style="margin: 0; font-size: clamp(26px, 3.2vw, 32px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 500">Componentes</h2>
+        <span style="flex: 1; height: 1px; background: rgba(255,255,255,0.09)"></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #5D5E60">Cantos curtos · hairline 1px</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
+
+        <div style="padding: 24px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 18px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Botões</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+            <button type="button" style="font-family: inherit; cursor: pointer; padding: 11px 20px; border-radius: 4px; border: 1px solid rgba(207,211,218,0.35); background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 26px -14px rgba(0,0,0,0.75); color: #070A14; font-size: 13px; font-weight: 600; letter-spacing: -0.01em; transition: filter 140ms cubic-bezier(0.22,0.61,0.36,1), transform 140ms cubic-bezier(0.22,0.61,0.36,1)" style-hover="filter: brightness(1.06)" style-active="transform: translateY(1px)">Acessar o sistema</button>
+            <button type="button" style="font-family: inherit; cursor: pointer; padding: 11px 20px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.028); color: #E8EAEE; font-size: 13px; font-weight: 500; transition: background 140ms cubic-bezier(0.22,0.61,0.36,1)" style-hover="background: rgba(255,255,255,0.05)">Ver detalhes</button>
+            <button type="button" style="font-family: inherit; cursor: pointer; padding: 11px 8px; border: 0; background: transparent; color: #A7A8AC; font-size: 13px; font-weight: 500; transition: color 140ms" style-hover="color: #E8EAEE">Falar com a gente →</button>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center">
+            <button type="button" disabled="" style="font-family: inherit; padding: 11px 20px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02); color: #5D5E60; font-size: 13px; font-weight: 500; cursor: not-allowed">Desabilitado</button>
+            <button type="button" style="font-family: inherit; cursor: pointer; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.028); color: #E8EAEE; font-size: 12.5px; font-weight: 500">Pílula · ação compacta</button>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center">
+            <span style="display: grid; place-items: center; width: 28px; height: 28px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.028); color: #A7A8AC; font-size: 13px">↗</span>
+            <span style="display: grid; place-items: center; width: 28px; height: 28px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.028); color: #A7A8AC; font-size: 13px">＋</span>
+            <span style="font-size: 12.5px; color: #7A7B7F">Cápsula de ícone 28×28 — motivo da assinatura</span>
+          </div>
+        </div>
+
+        <div style="padding: 24px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 18px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Badges e campos</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <span style="padding: 5px 11px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.03); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #A7A8AC">Web</span>
+            <span style="padding: 5px 11px; border-radius: 999px; border: 1px solid rgba(47,98,196,0.5); background: rgba(47,98,196,0.14); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #7BA5EE">Ativo</span>
+            <span style="padding: 5px 11px; border-radius: 999px; border: 1px solid rgba(99,199,154,0.35); background: rgba(99,199,154,0.1); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #63C79A">No ar</span>
+            <span style="padding: 5px 11px; border-radius: 999px; border: 1px solid rgba(216,180,92,0.35); background: rgba(216,180,92,0.1); font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #D8B45C">Beta</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">E-mail</label>
+            <input type="text" placeholder="voce@empresa.com.br" style="font-family: inherit; width: 100%; padding: 12px 14px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.12); background: rgba(4,6,13,0.55); color: #E8EAEE; font-size: 14px; outline: none" style-focus="border-color: #4A80E0; box-shadow: 0 0 0 1px rgba(74,128,224,0.35)" />
+            <span style="font-size: 12px; color: #5D5E60">Foco: hairline azul + anel de 1px. Fundo do campo é mais escuro que o card.</span>
+          </div>
+        </div>
+
+        <div style="padding: 0; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; overflow: hidden; background: linear-gradient(165deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.015) 38%, rgba(4,6,13,0.4) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 8px 24px -12px rgba(0,0,0,0.7); display: flex; flex-direction: column">
+          <div style="padding: 24px; display: flex; flex-direction: column; gap: 14px">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Card de sistema</div>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.14em; color: #4A80E0">01</span>
+            </div>
+            <h3 style="margin: 0; font-size: 22px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 500">iGenda</h3>
+            <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #A7A8AC">Agendamento e PDV para quem vende tempo. Barbearias, salões, clínicas.</p>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.09); border-radius: 4px; overflow: hidden">
+              <div style="padding: 12px 10px; background: #070A14; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 17px; font-weight: 500; letter-spacing: -0.02em">24h</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #5D5E60">Online</span></div>
+              <div style="padding: 12px 10px; background: #070A14; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 17px; font-weight: 500; letter-spacing: -0.02em">PDV</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #5D5E60">Integrado</span></div>
+              <div style="padding: 12px 10px; background: #070A14; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 17px; font-weight: 500; letter-spacing: -0.02em">Web</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 8.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #5D5E60">Navegador</span></div>
+            </div>
+          </div>
+          <div style="height: 3px; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); opacity: 0.9"></div>
+        </div>
+      </div>
+    </section>
+
+    <sc-if value="{{ showMotion }}" hint-placeholder-val="{{ true }}">
+    <section data-screen-label="Movimento" style="padding: clamp(48px, 8vh, 96px) 0; border-top: 1px solid rgba(255,255,255,0.09)">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; color: #2F62C4">06</span>
+        <h2 style="margin: 0; font-size: clamp(26px, 3.2vw, 32px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 500">Movimento e estados</h2>
+        <span style="flex: 1; height: 1px; background: rgba(255,255,255,0.09)"></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #5D5E60">Mecânico · sem bounce</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px">
+        <div style="padding: 22px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 10px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Duração</div>
+          <div style="font-size: 14px; line-height: 1.7; color: #A7A8AC">hover <span style="color: #E8EAEE">140ms</span><br />entrada/saída <span style="color: #E8EAEE">240ms</span><br />revelação de seção <span style="color: #E8EAEE">520ms</span></div>
+        </div>
+        <div style="padding: 22px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 10px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Easing</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.8; color: #A7A8AC">cubic-bezier(.22,.61,.36,1)<br />cubic-bezier(.65,.05,.36,1)</div>
+          <div style="font-size: 13px; color: #5D5E60">Sem elástico, sem overshoot.</div>
+        </div>
+        <div style="padding: 22px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 12px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Hover em card</div>
+          <div style="padding: 14px 16px; border: 1px solid rgba(255,255,255,0.09); border-radius: 6px; background: rgba(255,255,255,0.028); font-size: 13.5px; color: #A7A8AC; transition: all 140ms cubic-bezier(0.22,0.61,0.36,1); cursor: pointer" style-hover="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.16); color: #E8EAEE; transform: translateY(-1px)">Passe o mouse aqui</div>
+          <div style="font-size: 12.5px; color: #5D5E60">Superfície clareia, hairline sobe, texto acende. Escala máx. 1.01.</div>
+        </div>
+        <div style="padding: 22px; border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; background: rgba(255,255,255,0.028); display: flex; flex-direction: column; gap: 12px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #7A7B7F">Notebook 3D</div>
+          <div style="font-size: 13.5px; line-height: 1.55; color: #A7A8AC">A única peça expressiva do site. Permanece exatamente como está — o resto da interface fica quieto para ela funcionar.</div>
+        </div>
+      </div>
+    </section>
+    </sc-if>
+
+    <sc-if value="{{ showReferences }}" hint-placeholder-val="{{ true }}">
+    <section data-screen-label="Referências" style="padding: clamp(48px, 8vh, 96px) 0; border-top: 1px solid rgba(255,255,255,0.09)">
+      <div style="display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; color: #2F62C4">07</span>
+        <h2 style="margin: 0; font-size: clamp(26px, 3.2vw, 32px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 500">Origem</h2>
+        <span style="flex: 1; height: 1px; background: rgba(255,255,255,0.09)"></span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #5D5E60">Materiais da marca</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <div style="border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; overflow: hidden"><img src="./design-system/assets/assinatura-email.jpg" alt="Assinatura de e-mail DRUVE" style="width: 100%; height: auto; display: block" /></div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+          <div style="border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; overflow: hidden; aspect-ratio: 16 / 9"><img src="./design-system/assets/ref-pantone-mood.jpeg" alt="Moodboard Pantone" style="width: 100%; height: 100%; object-fit: cover; display: block" /></div>
+          <div style="border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; overflow: hidden; aspect-ratio: 16 / 9"><img src="./design-system/assets/ref-metal-blue-marble.jpeg" alt="Mármore azul e prata" style="width: 100%; height: 100%; object-fit: cover; display: block" /></div>
+        </div>
+      </div>
+      <div style="margin-top: 18px; font-size: 13px; line-height: 1.6; color: #7A7B7F; max-width: 70ch">Âncoras: Pantone 19-3940 Blue Depths e Pantone 20-0002 Ice Palace. Os tokens vivem em <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A7A8AC">design-system/tokens/</span> e a documentação completa em <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #A7A8AC">design-system/readme.md</span>.</div>
+    </section>
+    </sc-if>
+
+    <footer style="padding: 40px 0 0; border-top: 1px solid rgba(255,255,255,0.09); display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #5D5E60">DRUVE · Desenvolvimento de software</div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; color: #3A3D45">Design System v1 · 2026</div>
+    </footer>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Seções&quot;},&quot;showReferences&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Seções&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      showMotion: this.props.showMotion ?? true,
+      showReferences: this.props.showReferences ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>

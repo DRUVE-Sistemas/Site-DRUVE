@@ -1,0 +1,52 @@
+/* DRUVE — cor
+   Duas famílias e nada mais: azul-noite (Pantone 19-3940 Blue Depths como âncora)
+   e metálico prata (Pantone 20-0002 Ice Palace). O azul royal é ACENTO, usado
+   com parcimônia. Sem paletas por produto, sem roxo/laranja/ciano. */
+:root {
+  /* azul-noite — fundos e superfícies */
+  --ink-950: #04060D;
+  --ink-900: #070A14;
+  --ink-850: #0A0E1B;
+  --ink-800: #0E1425;
+  --ink-700: #141C33;
+  --navy-600: #1B2544;
+  --navy-500: #263056; /* Blue Depths */
+  --navy-400: #33416D;
+  --navy-300: #45568A;
+
+  /* acento azul royal — só em foco, links, estados ativos e dado destacado */
+  --blue-500: #2F62C4;
+  --blue-400: #4A80E0;
+  --blue-300: #7BA5EE;
+
+  /* metálico prata — texto, hairlines e superfícies escovadas */
+  --steel-050: #F2F3F5;
+  --steel-100: #DEDFE1;
+  --steel-200: #CDCED0;
+  --steel-300: #B1B2B4;
+  --steel-400: #A7A8AC;
+  --steel-500: #8A8D93;
+  --steel-600: #7A7B7F;
+  --steel-700: #5D5E60;
+  --steel-800: #3A3D45;
+
+  /* semânticos */
+  --bg-page: var(--ink-950);
+  --bg-surface: rgba(255,255,255,0.028);
+  --bg-surface-hover: rgba(255,255,255,0.05);
+  --bg-inset: rgba(4,6,13,0.55);
+
+  --text-primary: #E8EAEE;
+  --text-secondary: var(--steel-400);
+  --text-tertiary: var(--steel-600);
+  --text-on-metal: var(--ink-900);
+
+  --line-hairline: rgba(255,255,255,0.09);
+  --line-strong: rgba(255,255,255,0.16);
+  --line-metal: rgba(207,211,218,0.35);
+  --focus-ring: var(--blue-400);
+
+  --state-ok: #63C79A;
+  --state-warn: #D8B45C;
+  --state-danger: #D9736B;
+}
