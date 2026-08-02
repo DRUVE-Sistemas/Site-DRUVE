@@ -1251,8 +1251,13 @@ class Component extends DCLogic {
     if (this.dead || !this.canvas) return;
     this.THREE = THREE;
 
-    const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // ponytail: custo de fragmento escala ao quadrado da densidade de pixel.
+    // Em tela densa o MSAA vira redundante, e o preserveDrawingBuffer saiu
+    // porque nada em runtime lê o canvas (sem toDataURL/captura no site).
+    const dpr = window.devicePixelRatio || 1;
+    const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: dpr < 2, alpha: true });
+    renderer.setPixelRatio(Math.min(dpr, coarse ? 1.25 : 1.75));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.18;
     this.renderer = renderer;
@@ -2246,8 +2251,8 @@ class Component extends DCLogic {
     this.canvas.style.opacity = c.dim.toFixed(3);
     if (this.counter) this.counter.style.opacity = (1 - outro).toFixed(3);
 
-
-    this.renderer.render(this.scene, this.camera);
+    // ponytail: canvas dissolvido no fim da sequência não precisa de GPU nenhuma
+    if (c.dim >= 0.02) this.renderer.render(this.scene, this.camera);
   };
 }
 </script>
