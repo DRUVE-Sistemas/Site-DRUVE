@@ -12,6 +12,7 @@ mesaflow.html         página de detalhe do MesaFlow
 iporte.html           página de detalhe do IPorte
 design-system.html    documentação visual da marca
 support.js            runtime que interpreta os arquivos (não editar — é gerado)
+PERFORMANCE.md        níveis de qualidade do hero 3D e como testá-los
 assets/               mídia usada pelo site
   logo-druve.jpg      textura do logo no notebook 3D
   druve-hero.mp4      vídeo que roda na tela do notebook
@@ -46,6 +47,9 @@ Cada página tem duas partes:
    Textos, títulos, preços, links e seções ficam aqui. É o que você mexe 95% do tempo.
 2. **`<script type="text/x-dc" data-dc-script>`** (no fim do arquivo) — a lógica:
    cena 3D em Three.js, animação de scroll, parallax.
+
+A cena 3D roda em três níveis de qualidade, conforme o aparelho — antes de mexer
+nela, ler [PERFORMANCE.md](PERFORMANCE.md).
 
 ### Trocar links e textos rápidos
 

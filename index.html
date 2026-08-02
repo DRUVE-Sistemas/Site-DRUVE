@@ -71,6 +71,15 @@
   @keyframes druveHint { 0%,100% { transform: translateY(0); opacity: .5 } 50% { transform: translateY(7px); opacity: 1 } }
   @keyframes druveFloat { 0%,100% { transform: translate3d(0,0,0) } 50% { transform: translate3d(0,-26px,0) } }
   @keyframes druveSpin { to { transform: rotate(360deg) } }
+  /* modo sem GPU: 23 backdrop-filter e 26 filter: blur() da página são
+     rasterizados no processador e custam mais que o 3D inteiro. O !important
+     é necessário porque os efeitos estão em style inline. */
+  .druve-sem-gpu *, .druve-sem-gpu *::before, .druve-sem-gpu *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+    animation: none !important;
+  }
 </style>
 </helmet>
 
@@ -848,7 +857,7 @@ class Component extends DCLogic {
 
   // ---------- serigrafia das teclas (um único plano acima dos keycaps) ----------
   legendTexture(THREE, keys, aspect) {
-    const cw = 2048, ch = Math.max(2, Math.round(cw / aspect));
+    const cw = (this.texScale || 1) < 1 ? 1024 : 2048, ch = Math.max(2, Math.round(cw / aspect));
     const cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
     const c = cv.getContext('2d');
     const ink = 'rgba(232,234,238,0.95)', dim = 'rgba(205,206,208,0.78)';
@@ -1018,6 +1027,9 @@ class Component extends DCLogic {
 
   // vídeo institucional rodando em loop na tela do notebook (seção hero)
   makeVideoTexture(THREE, renderer, screenAspect) {
+    // sem GPU o decode do mp4 disputa o mesmo processador que rasteriza a cena;
+    // null aqui faz a tela do notebook cair no canvas pintado (já tratado abaixo)
+    if (this.noVideo) return null;
     const v = document.createElement('video');
     v.src = 'assets/druve-hero.mp4';
     v.muted = true; v.defaultMuted = true; v.loop = true; v.autoplay = true;
@@ -1038,6 +1050,9 @@ class Component extends DCLogic {
       tryPlay();
       setTimeout(() => { v._seeking = false; }, 400);
     };
+    // mesma função serve para o retorno ao hero: a trava de seek evita re-seekar
+    // em rajada se a seção trocar duas vezes seguidas
+    this.restartVideo = restart;
     v.addEventListener('ended', restart);
     this.vidWatch = setInterval(() => {
       // reconcilia o estado desejado (hero visível) com o estado real do elemento
@@ -1068,7 +1083,8 @@ class Component extends DCLogic {
 
   makeScreenCanvas() {
     const cv = document.createElement('canvas');
-    cv.width = 1536; cv.height = 960;
+    const s = this.texScale || 1;
+    cv.width = Math.round(1536 * s); cv.height = Math.round(960 * s);
     return cv;
   }
 
@@ -1234,9 +1250,11 @@ class Component extends DCLogic {
     ];
 
     if (!this.screenCanvases) this.screenCanvases = painters.map(() => this.makeScreenCanvas());
+    // os painters desenham sempre em 1536x960; o contexto é que encolhe no tier baixo
+    const s = this.texScale || 1;
     painters.forEach((p, i) => {
       const ctx = this.screenCanvases[i].getContext('2d');
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.setTransform(s, 0, 0, s, 0, 0);
       ctx.clearRect(0, 0, 1536, 960);
       ctx.textBaseline = 'middle';
       p(ctx);
@@ -1258,9 +1276,41 @@ class Component extends DCLogic {
     const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
     const renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: dpr < 2, alpha: true });
     renderer.setPixelRatio(Math.min(dpr, coarse ? 1.25 : 1.75));
+
+    // aceleração gráfica desligada: o WebGL cai no rasterizador de software
+    // (SwiftShader/llvmpipe). O nome do renderer é o único sinal direto disso;
+    // quando o navegador mascara a string, o watchdog de fps pega pelo tempo real.
+    const gl = renderer.getContext();
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    const gpu = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : '';
+    const soft = /swiftshader|llvmpipe|softwarerasterizer|basic render|paravirtual/i.test(gpu)
+      || location.search.indexOf('soft=1') >= 0;
+    this.gpuName = gpu;
+
+    // ponytail: tier 2 — aparelho fraco perde textura, shader e luz, não a cena.
+    // deviceMemory/hardwareConcurrency não existem no Safari: sem sinal = tier alto.
+    // ?low=1 força o tier baixo no desktop, único jeito de conferir o visual dele
+    // memória apertada e falta de GPU são problemas diferentes: o celular não tem
+    // VRAM para as telas em tamanho cheio, o PC sem aceleração tem — o que falta
+    // nele é taxa de preenchimento. Só o primeiro justifica textura menor.
+    const memLow = location.search.indexOf('low=1') >= 0
+      || coarse || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+    const low = soft || memLow;
+    this.lowTier = low;
+    this.softRender = soft;
+    this.texScale = memLow ? 0.5 : 1;   // 1536x960 -> 768x480 por tela (-75% de VRAM)
+    this.fpsCap = low ? 1000 / 30 : 0;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.18;
+    // exposição compensa as luzes que o tier baixo não acende, sem custo de shader
+    renderer.toneMappingExposure = low ? 1.32 : 1.18;
     this.renderer = renderer;
+    // sem GPU: mata o blur da página na hora (ganho grande, custo visual pequeno)
+    // e segura a resolução em 0.75 — abaixo disso a cena fica visivelmente
+    // borrada, então quem decide se desce mais é o watchdog, medindo.
+    if (soft) {
+      this.degrade(1);
+      document.documentElement.classList.add('druve-sem-gpu');
+    }
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 40);
@@ -1291,13 +1341,18 @@ class Component extends DCLogic {
     scene.environmentIntensity = 0.78;
     pmrem.dispose();
 
-    scene.add(new THREE.HemisphereLight(0xdfe3ea, 0x04060d, 0.9));
-    scene.add(new THREE.AmbientLight(0x141c33, 0.7));
-    const key = new THREE.DirectionalLight(0xffffff, 4.1); key.position.set(0.7, 1.0, 0.75); scene.add(key);
-    const fill = new THREE.DirectionalLight(0xcfd3da, 2.0); fill.position.set(-1.0, 0.4, 0.55); scene.add(fill);
-    const rim = new THREE.DirectionalLight(0xffffff, 2.7); rim.position.set(-0.35, 0.75, -0.95); scene.add(rim);
-    const rim2 = new THREE.DirectionalLight(0xcfd3da, 2.4); rim2.position.set(0.95, -0.2, -0.6); scene.add(rim2);
-    const under = new THREE.PointLight(0x4a80e0, 0.22, 1.2, 2); under.position.set(0, -0.16, 0.14); scene.add(under);
+    // ponytail: cada luz entra no loop de fragmento de todo material. No tier baixo
+    // ficam key + rim (que desenham a silhueta do metal) e o hemisfério com o
+    // ambiente somado nele; fill/rim2/under viram intensidade, não luz nova.
+    scene.add(new THREE.HemisphereLight(0xdfe3ea, 0x04060d, low ? 1.85 : 0.9));
+    if (!low) scene.add(new THREE.AmbientLight(0x141c33, 0.7));
+    const key = new THREE.DirectionalLight(0xffffff, low ? 4.6 : 4.1); key.position.set(0.7, 1.0, 0.75); scene.add(key);
+    const rim = new THREE.DirectionalLight(0xffffff, low ? 3.2 : 2.7); rim.position.set(-0.35, 0.75, -0.95); scene.add(rim);
+    if (!low) {
+      const fill = new THREE.DirectionalLight(0xcfd3da, 2.0); fill.position.set(-1.0, 0.4, 0.55); scene.add(fill);
+      const rim2 = new THREE.DirectionalLight(0xcfd3da, 2.4); rim2.position.set(0.95, -0.2, -0.6); scene.add(rim2);
+      const under = new THREE.PointLight(0x4a80e0, 0.22, 1.2, 2); under.position.set(0, -0.16, 0.14); scene.add(under);
+    }
     // brilho da tela sobre o teclado: sem atenuação, para não estourar quando o modelo é ampliado
     this.spill = new THREE.PointLight(0xffffff, 0.5, 0, 0); this.spill.position.set(0, 0.06, 0.04); scene.add(this.spill);
 
@@ -1305,21 +1360,28 @@ class Component extends DCLogic {
     const mm = this.metalMaps(THREE);
     const V2 = (a) => new THREE.Vector2(a, a);
     const logoTex = this.logoTexture(THREE);
+    // ponytail: clearcoat e anisotropy são passes extras de fragmento no Physical.
+    // No tier baixo cai para Standard sem esses termos — o resto das props é igual.
+    const Phys = (o) => {
+      if (!low) return new THREE.MeshPhysicalMaterial(o);
+      const { clearcoat, clearcoatRoughness, anisotropy, anisotropyRotation, ...rest } = o;
+      return new THREE.MeshStandardMaterial(rest);
+    };
     const mats = {
-      body: new THREE.MeshPhysicalMaterial({ name: 'aluminio-anodizado', color: f.body, roughness: Math.min(1, f.rough * 1.85), metalness: f.metal, normalMap: mm.normal, normalScale: V2(0.3), roughnessMap: mm.rough, anisotropy: 0.5, anisotropyRotation: Math.PI / 2, clearcoat: 0.14, clearcoatRoughness: 0.42 }),
-      edge: new THREE.MeshPhysicalMaterial({ name: 'chanfro-polido', color: f.edge, roughness: 0.12, metalness: 1, clearcoat: 0.6, clearcoatRoughness: 0.1 }),
+      body: Phys({ name: 'aluminio-anodizado', color: f.body, roughness: Math.min(1, f.rough * 1.85), metalness: f.metal, normalMap: mm.normal, normalScale: V2(0.3), roughnessMap: mm.rough, anisotropy: 0.5, anisotropyRotation: Math.PI / 2, clearcoat: 0.14, clearcoatRoughness: 0.42 }),
+      edge: Phys({ name: 'chanfro-polido', color: f.edge, roughness: 0.12, metalness: 1, clearcoat: 0.6, clearcoatRoughness: 0.1 }),
       dark: new THREE.MeshStandardMaterial({ name: 'preto-fosco', color: '#101216', roughness: 0.62, metalness: 0.25 }),
       deck: new THREE.MeshStandardMaterial({ name: 'recuo-teclado', color: '#191B1F', roughness: 0.88, metalness: 0.1, normalMap: mm.normal, normalScale: V2(0.18), envMapIntensity: 0.22 }),
       key: new THREE.MeshLambertMaterial({ name: 'tecla', color: '#2B2D31', normalMap: mm.normal, normalScale: V2(0.45), reflectivity: 0 }),
       grille: new THREE.MeshStandardMaterial({ name: 'grade-alto-falante', color: f.body, roughness: 0.62, metalness: f.metal, envMapIntensity: 0.75 }),
-      glass: new THREE.MeshPhysicalMaterial({ name: 'vidro-trackpad', color: '#0E1013', roughness: 0.16, metalness: 0.05, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 0.22 }),
-      panel: new THREE.MeshPhysicalMaterial({ name: 'vidro-moldura', color: '#04060D', roughness: 0.18, metalness: 0.5, clearcoat: 0.9, clearcoatRoughness: 0.08 }),
-      screenGlass: new THREE.MeshPhysicalMaterial({ name: 'vidro-tela', color: '#ffffff', transparent: true, opacity: 0.055, roughness: 0.045, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.03, depthWrite: false }),
+      glass: Phys({ name: 'vidro-trackpad', color: '#0E1013', roughness: 0.16, metalness: 0.05, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 0.22 }),
+      panel: Phys({ name: 'vidro-moldura', color: '#04060D', roughness: 0.18, metalness: 0.5, clearcoat: 0.9, clearcoatRoughness: 0.08 }),
+      screenGlass: Phys({ name: 'vidro-tela', color: '#ffffff', transparent: true, opacity: 0.055, roughness: 0.045, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.03, depthWrite: false }),
       notch: new THREE.MeshStandardMaterial({ name: 'notch', color: '#04060D', roughness: 0.44, metalness: 0.1 }),
       port: new THREE.MeshStandardMaterial({ name: 'porta', color: '#0A0B0E', roughness: 0.68, metalness: 0.22 }),
       tongue: new THREE.MeshStandardMaterial({ name: 'lingueta-usb', color: '#C6C8CC', roughness: 0.55, metalness: 0.1 }),
       foot: new THREE.MeshStandardMaterial({ name: 'pe-borracha', color: '#0E1425', roughness: 0.88, metalness: 0.04 }),
-      logo: new THREE.MeshPhysicalMaterial({ name: 'logo-druve', color: '#ffffff', roughness: 0.15, metalness: 0.2, clearcoat: 0.7, clearcoatRoughness: 0.06, transparent: true, map: logoTex, emissiveMap: logoTex, emissive: '#ffffff', emissiveIntensity: 1.3 })
+      logo: Phys({ name: 'logo-druve', color: '#ffffff', roughness: 0.15, metalness: 0.2, clearcoat: 0.7, clearcoatRoughness: 0.06, transparent: true, map: logoTex, emissiveMap: logoTex, emissive: '#ffffff', emissiveIntensity: 1.3 })
     };
     this.mats = mats;
 
@@ -1400,6 +1462,16 @@ class Component extends DCLogic {
     const kbDepth = U * 5.6 + G * 5;
     const kb = new THREE.Group(); kb.name = 'teclado';
     const legends = [];
+    // ponytail: 78 teclas, ~10 tamanhos distintos. Reaproveitar a geometria por
+    // tamanho troca 78 ExtrudeGeometry+smoothNormals no boot por ~10 (vale em
+    // todo tier; é o que congela a tela no carregamento do celular).
+    const keyGeos = new Map();
+    const keyGeo = (w, h) => {
+      const id = w.toFixed(5) + ':' + h.toFixed(5);
+      let g = keyGeos.get(id);
+      if (!g) { g = this.roundedBox(THREE, w, h, kH, 0.0019, 0); keyGeos.set(id, g); }
+      return g;
+    };
     let zc = z0;
     ROWS.forEach((row, r) => {
       const kh = U * row.h;
@@ -1407,7 +1479,7 @@ class Component extends DCLogic {
       row.keys.forEach((def, i) => {
         const w = cell(def[1]), type = def[2], ic = def[3];
         const put = (kz, khh, t, l, n) => {
-          const k = new THREE.Mesh(this.roundedBox(THREE, w, khh, kH, 0.0019, 0), mats.key);
+          const k = new THREE.Mesh(keyGeo(w, khh), mats.key);
           k.name = 'tecla-' + r + '-' + i + (n || '');
           k.userData.noFit = true;
           k.rotation.x = -Math.PI / 2;
@@ -1945,7 +2017,8 @@ class Component extends DCLogic {
 
   phoneScreenMat(THREE) {
     const cv = document.createElement('canvas');
-    cv.width = 540; cv.height = 1170;
+    const s = this.texScale || 1;
+    cv.width = Math.round(540 * s); cv.height = Math.round(1170 * s);
     this.phoneCv = cv;
     this.paintPhone();
     const t = new THREE.CanvasTexture(cv);
@@ -1959,7 +2032,8 @@ class Component extends DCLogic {
   paintPhone() {
     const c = this.phoneCv.getContext('2d');
     const T = '#2F62C4';
-    c.setTransform(1, 0, 0, 1, 0, 0);
+    const ps = this.texScale || 1;
+    c.setTransform(ps, 0, 0, ps, 0, 0);
     c.clearRect(0, 0, 540, 1170);
     c.textBaseline = 'middle'; c.textAlign = 'left';
     const bg = c.createLinearGradient(0, 0, 0, 1170);
@@ -2027,6 +2101,31 @@ class Component extends DCLogic {
     if (this.phoneTexRef) this.phoneTexRef.needsUpdate = true;
   }
 
+  // ponytail: um degrau por vez e só para baixo — não oscila e não precisa
+  // adivinhar o hardware. Materiais e luzes ficam de fora porque trocá-los em
+  // runtime exige recompilar shader, que é justamente o que trava.
+  degrade(upTo) {
+    if (this.step == null) this.step = 0;
+    const alvo = upTo == null ? this.step : upTo;
+    let mexeu = false;
+    while (this.step <= alvo && this.step <= 4) {
+      const s = this.step++;
+      mexeu = true;
+      if (s === 0) this.renderer.setPixelRatio(Math.min(this.renderer.getPixelRatio(), 1));
+      if (s === 1) { this.fpsCap = 1000 / 30; this.renderer.setPixelRatio(0.75); }
+      if (s === 2) { this.fpsCap = 1000 / 24; this.renderer.setPixelRatio(0.55); }
+      // blur em tempo real é o item mais caro da página quando não há GPU
+      if (s === 3) document.documentElement.classList.add('druve-sem-gpu');
+      // o vídeo do hero é o centro da cena: só sai se nada disso tiver bastado
+      if (s === 4) {
+        this.noVideo = true;
+        if (this.video) { this.video.pause(); this.wantVideo = false; }
+      }
+      if (s < 3 && this.onResize) this.onResize();
+    }
+    return mexeu;
+  }
+
   scroller() {
     let n = this.canvas && this.canvas.parentElement;
     while (n) {
@@ -2042,6 +2141,29 @@ class Component extends DCLogic {
   loop = () => {
     if (this.dead) return;
     requestAnimationFrame(this.loop);
+    // ponytail: no tier baixo 30fps estável vale mais que 60fps picotado
+    const agora = performance.now();
+    if (this.fpsCap) {
+      if (agora - (this._tLast || 0) < this.fpsCap - 1) return;
+      this._tLast = agora;
+    }
+
+    // watchdog: mede o fps entregue e desce um degrau quando fica longe do alvo.
+    // Pega o caso que nenhuma detecção estática pega — GPU velha, driver ruim,
+    // aceleração desligada com a string do renderer mascarada pelo navegador.
+    if (this._wT == null) { this._wT = agora; this._wN = 0; }
+    this._wN++;
+    if (agora - this._wT >= 1000) {
+      const dt = agora - this._wT;
+      const fps = this._wN * 1000 / dt;
+      const alvo = this.fpsCap ? 1000 / this.fpsCap : 60;
+      this._wT = agora; this._wN = 0;
+      // janela longa demais = aba em segundo plano com o rAF suspenso, não lentidão
+      if (dt <= 2000) {
+        this.fps = Math.round(fps);
+        if (this._wSkip) { if (fps < alvo * 0.62) this.degrade(); } else this._wSkip = 1;
+      }
+    }
     if (this.frame++ % 24 === 0 || !this.sc) this.sc = this.scroller();
     if (this.glide && this.sc) {
       const G = this.glide;
@@ -2144,7 +2266,8 @@ class Component extends DCLogic {
     this.fvis = f;
 
     if (!this.cur) this.cur = { x: tx, y: ty2, z: tz2, ry: try_, rx: trx, lid: tlid, s: ts, mx: 0, my: 0 };
-    const c = this.cur, k = E ? 0.82 : J ? 0.4 : 0.11;
+    // metade dos frames = metade da convergência por segundo; o fator compensa
+    const c = this.cur, k = Math.min(0.95, (E ? 0.82 : J ? 0.4 : 0.11) * (this.fpsCap ? 1.7 : 1));
     c.x += (tx - c.x) * k; c.y += (ty2 - c.y) * k; c.z += (tz2 - c.z) * k;
     c.ry += (try_ - c.ry) * k; c.rx += (trx - c.rx) * k;
     c.lid += (tlid - c.lid) * k; c.s += (ts - c.s) * k;
@@ -2178,9 +2301,12 @@ class Component extends DCLogic {
       this.screenIdx = idx;
       this.screenMat.map = this.screenTextures[idx];
       this.screenMat.needsUpdate = true;
-      if (this.video) {
+      if (this.video && !this.noVideo) {
         this.wantVideo = this.screenTextures[idx] === this.videoTex;
-        if (this.wantVideo) { const p = this.video.play(); if (p && p.catch) p.catch(() => {}); }
+        // este bloco só roda quando a textura da tela muda, ou seja, quando a
+        // seção trocou de fato — rolar dentro do hero não passa por aqui e o
+        // vídeo segue de onde estava
+        if (this.wantVideo) this.restartVideo();
         else this.video.pause();
       }
     }
