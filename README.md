@@ -75,6 +75,15 @@ python -m http.server 8000
 Depois abrir http://localhost:8000. **Não abra por `file://`** — o runtime busca a
 própria página via `fetch` e o navegador bloqueia em `file://`.
 
+Nesse servidor os botões "Saiba mais" dão **404**, e não é bug do site: os links
+internos são sem `.html` (`/igenda`), o GitHub Pages resolve isso sozinho e o
+`http.server` do Python não. Local, ou se abre `/igenda.html` na mão, ou se usa
+um servidor que faça o mesmo que o Pages:
+
+```bash
+npx -y serve .
+```
+
 ## Publicar no GitHub Pages
 
 ```bash

@@ -733,48 +733,46 @@ class Component extends DCLogic {
     return g;
   }
 
-  // halo: a própria silhueta da logo borrada, para a luz sair difusa por trás dela
+  // halo: a própria silhueta da logo borrada, para a luz sair difusa por trás.
+  // Calibrar no console: __druve.ajustarHalo({ blur: .15, opacidade: .3 })
   haloTexture(THREE) {
     if (this._haloTex) return this._haloTex;
-    const cv = document.createElement('canvas'); cv.width = 8; cv.height = 8;
+    const cv = document.createElement('canvas'); cv.width = cv.height = 8;
     this._haloCv = cv;
     const t = new THREE.CanvasTexture(cv);
     t.colorSpace = THREE.SRGBColorSpace;
     this._haloTex = t;
-    this.haloPad = { x: 0.30, y: 0.95 };
+    this.haloCfg = { padX: 0.08, padY: 0.15, blur: 0.15, opacidade: 0.3 };
     this.syncHalo();
     return t;
   }
 
   syncHalo() {
-    const cv = this._haloCv, src = this._logoTex && this._logoTex.image;
+    const cv = this._haloCv, src = this._logoTex && this._logoTex.image, cfg = this.haloCfg;
     if (!cv || !src || !src.width) return;
     const W = 512, H = Math.max(8, Math.round(W * src.height / src.width));
-    const px = Math.round(W * this.haloPad.x), py = Math.round(H * this.haloPad.y);
+    const bl = cfg.blur * H;
+    // a margem nunca fica menor que o alcance do borrão, senão o glow corta reto
+    const px = Math.max(Math.round(W * cfg.padX), Math.round(bl * 1.6));
+    const py = Math.max(Math.round(H * cfg.padY), Math.round(bl * 1.6));
     cv.width = W + px * 2; cv.height = H + py * 2;
     const c = cv.getContext('2d');
     c.clearRect(0, 0, cv.width, cv.height);
-    c.filter = 'blur(' + Math.max(12, Math.round(H * 0.62)) + 'px)';
-    c.globalAlpha = 0.95; c.drawImage(src, px, py, W, H);
-    c.filter = 'blur(' + Math.max(6, Math.round(H * 0.26)) + 'px)';
-    c.globalAlpha = 0.4; c.drawImage(src, px, py, W, H);
-    c.filter = 'none'; c.globalAlpha = 1;
-    // envelope elíptico centrado: garante queda simétrica ao redor da gravação
-    c.globalCompositeOperation = 'destination-in';
-    c.save();
-    c.translate(cv.width / 2, cv.height / 2);
-    c.scale(cv.width / cv.height, 1);
-    const env = c.createRadialGradient(0, 0, 0, 0, 0, cv.height / 2);
-    env.addColorStop(0, 'rgba(0,0,0,1)');
-    env.addColorStop(0.45, 'rgba(0,0,0,0.85)');
-    env.addColorStop(0.78, 'rgba(0,0,0,0.22)');
-    env.addColorStop(1, 'rgba(0,0,0,0)');
-    c.fillStyle = env;
-    c.fillRect(-cv.width, -cv.height, cv.width * 2, cv.height * 2);
-    c.restore();
-    c.globalCompositeOperation = 'source-over';
+    c.filter = 'blur(' + Math.max(2, Math.round(bl)) + 'px)';
+    c.drawImage(src, px, py, W, H);
+    c.filter = 'none';
     this._haloTex.needsUpdate = true;
-    if (this.logoHalo && this.logoMesh) this.logoHalo.scale.set(1, this.logoMesh.scale.y, 1);
+    if (this.logoHalo) {
+      this.logoHalo.material.opacity = cfg.opacidade;
+      const sy = this.logoMesh ? this.logoMesh.scale.y : 1;
+      this.logoHalo.scale.set(cv.width / W, (cv.height / H) * sy, 1);
+    }
+  }
+
+  ajustarHalo(o) {
+    Object.assign(this.haloCfg, o || {});
+    this.syncHalo();
+    return this.haloCfg;
   }
 
   roundedPlane(THREE, w, h, r) {
@@ -1585,14 +1583,22 @@ class Component extends DCLogic {
     logo.name = 'logo-druve'; logo.userData.noFit = true;
     logo.position.set(0, LH / 2, -LT / 2 - 0.00035);
     logo.rotation.y = Math.PI; lid.add(logo);
-    const haloTex = this.haloTexture(THREE);
-    const halo = new THREE.Mesh(new THREE.PlaneGeometry(0.104 * (1 + this.haloPad.x * 2), (0.104 / 3.6) * (1 + this.haloPad.y * 2)), new THREE.MeshBasicMaterial({ name: 'halo-logo', map: haloTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, opacity: 0.68 }));
+    this.logoMesh = logo;
+    if (this.logoAspect) logo.scale.y = 3.6 / this.logoAspect;
+
+    // plano aditivo atrás da logo: a escala vem do próprio canvas do halo, então
+    // mudar a calibração não precisa reconstruir geometria
+    const halo = new THREE.Mesh(new THREE.PlaneGeometry(0.104, 0.104 / 3.6), new THREE.MeshBasicMaterial({
+      name: 'halo-logo', map: this.haloTexture(THREE), transparent: true,
+      blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false,
+      opacity: this.haloCfg.opacidade
+    }));
     halo.name = 'halo-logo'; halo.userData.noFit = true;
     halo.position.set(0, LH / 2, -LT / 2 - 0.0005);
     halo.rotation.y = Math.PI; lid.add(halo);
     this.logoHalo = halo;
-    this.logoMesh = logo;
-    if (this.logoAspect) logo.scale.y = 3.6 / this.logoAspect;
+    this.syncHalo();
+
     nb.add(lid);
     this.lid = lid;
 
