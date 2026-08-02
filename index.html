@@ -80,6 +80,92 @@
     filter: none !important;
     animation: none !important;
   }
+
+  /* ---------- o mergulho atravessa a navegação ----------
+     O site já tinha a metáfora: clicar mergulha na tela do notebook. Até aqui
+     ela morria no fade e a página seguinte começava do zero. Com transição de
+     documento a placa escura do mergulho é o MESMO elemento nos dois lados —
+     o navegador interpola a geometria, e a tela vira a página.
+     Só vale para /igenda, /mesaflow e /iporte: os links "entrar no sistema"
+     apontam para outro subdomínio, e transição cross-document exige mesma origem.
+     Sem suporte (Firefox hoje) o fade atual continua sendo o comportamento. */
+  @view-transition { navigation: auto }
+  [data-portal] { view-transition-name: druve-portal }
+  ::view-transition-group(druve-portal) {
+    animation-duration: 560ms;
+    animation-timing-function: cubic-bezier(.16,.84,.28,1);
+  }
+  ::view-transition-old(root) { animation: druveSai 300ms cubic-bezier(.4,0,.9,.2) both }
+  ::view-transition-new(root) { animation: druveEntra 520ms cubic-bezier(.16,.84,.28,1) both }
+  @keyframes druveSai { to { opacity: 0; transform: scale(1.05) } }
+  @keyframes druveEntra { from { opacity: 0; transform: scale(1.025) } }
+  /* pediu calma: a navegação volta a ser navegação */
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none }
+  }
+
+  /* ---------- coreografia dirigida pelo scroll ----------
+     O relógio é a posição da rolagem, não um timer: entra ao entrar, desfaz ao
+     voltar. Sem JS no caminho quente. Só liga quando o navegador tem view() e o
+     visitante não pediu calma — fora disso vale o IntersectionObserver do runtime. */
+  @property --druve-ang {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 94deg;
+  }
+  @keyframes druveSobe {
+    from { opacity: 0; transform: translateY(28px) }
+    to   { opacity: 1; transform: none }
+  }
+  @keyframes druveSobeCurto {
+    from { opacity: 0; transform: translateY(18px) }
+    to   { opacity: 1; transform: none }
+  }
+  /* o metal gira sob a luz enquanto o título entra — só dá para interpolar
+     um ângulo de gradiente com @property registrado */
+  @keyframes druveMetal {
+    from { --druve-ang: 34deg }
+    to   { --druve-ang: 94deg }
+  }
+  @supports (animation-timeline: view()) {
+    .druve-css-reveal [data-reveal] {
+      animation: druveSobe both linear;
+      animation-timeline: view();
+      animation-range: entry 4% cover 30%;
+    }
+    /* cascata real: cada filho tem a SUA faixa na linha do tempo, então o
+       escalonamento acompanha o scroll em vez de ser um delay fixo que o
+       visitante rápido nunca vê terminar */
+    .druve-css-reveal [data-stagger] > * {
+      animation: druveSobeCurto both linear;
+      animation-timeline: view();
+    }
+    .druve-css-reveal [data-stagger] > *:nth-child(1) { animation-range: entry 3% cover 22% }
+    .druve-css-reveal [data-stagger] > *:nth-child(2) { animation-range: entry 6% cover 25% }
+    .druve-css-reveal [data-stagger] > *:nth-child(3) { animation-range: entry 9% cover 28% }
+    .druve-css-reveal [data-stagger] > *:nth-child(4) { animation-range: entry 12% cover 31% }
+    .druve-css-reveal [data-stagger] > *:nth-child(5) { animation-range: entry 15% cover 34% }
+    .druve-css-reveal [data-stagger] > *:nth-child(6) { animation-range: entry 18% cover 37% }
+    .druve-css-reveal [data-stagger] > *:nth-child(n+7) { animation-range: entry 21% cover 40% }
+    .druve-css-reveal [data-metal] {
+      animation: druveMetal both linear;
+      animation-timeline: view();
+      animation-range: entry 10% cover 45%;
+    }
+  }
+  /* Pediu calma: o conteúdo aparece no estado final, sem entrada e sem laço
+     decorativo. Não é um `animation: none` no atacado — o spinner do mergulho
+     continua girando, porque ali o movimento É a informação de que algo está
+     carregando. Tirar isso deixaria o visitante sem resposta nenhuma. */
+  .druve-calmo [data-reveal],
+  .druve-calmo [data-stagger] > *,
+  .druve-calmo [data-metal] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .druve-calmo [data-float], .druve-calmo [data-hint] { animation: none !important }
+  .druve-calmo * { transition-duration: 1ms !important }
 </style>
 </helmet>
 
@@ -88,8 +174,8 @@
   <div style="position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden">
     <div style="position: absolute; inset: 0; background: radial-gradient(120% 82% at 50% -12%, #141C33 0%, #0A0E1B 46%, #04060D 80%)"></div>
     <div style="position: absolute; inset: -10% -10% 0 -10%; background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 74px 74px; -webkit-mask-image: radial-gradient(100% 65% at 50% 0%, #000 0%, transparent 72%); mask-image: radial-gradient(100% 65% at 50% 0%, #000 0%, transparent 72%)"></div>
-    <div style="position: absolute; top: -20vh; left: -8vw; width: 48vw; height: 48vw; border-radius: 999px; background: radial-gradient(circle, rgba(47,98,196,0.16), rgba(47,98,196,0) 70%); filter: blur(30px); animation: druveFloat 19s ease-in-out infinite"></div>
-    <div style="position: absolute; top: 26vh; right: -14vw; width: 40vw; height: 40vw; border-radius: 999px; background: radial-gradient(circle, rgba(207,211,218,0.07), rgba(207,211,218,0) 70%); filter: blur(34px); animation: druveFloat 25s ease-in-out infinite reverse"></div>
+    <div style="position: absolute; top: -20vh; left: -8vw; width: 48vw; height: 48vw; border-radius: 999px; background: radial-gradient(circle, rgba(47,98,196,0.16), rgba(47,98,196,0) 70%); filter: blur(30px); animation: druveFloat 19s ease-in-out infinite" data-float="1"></div>
+    <div style="position: absolute; top: 26vh; right: -14vw; width: 40vw; height: 40vw; border-radius: 999px; background: radial-gradient(circle, rgba(207,211,218,0.07), rgba(207,211,218,0) 70%); filter: blur(34px); animation: druveFloat 25s ease-in-out infinite reverse" data-float="1"></div>
     <canvas ref="{{ canvasRef }}" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block"></canvas>
     <div style="position: absolute; inset: 0; background: radial-gradient(80% 55% at 50% 108%, rgba(4,6,13,0.9), rgba(4,6,13,0) 70%)"></div>
   </div>
@@ -120,13 +206,15 @@
     </div>
   </div>
 
-  <div ref="{{ diveRef }}" style="position: fixed; inset: 0; z-index: 90; opacity: 0; pointer-events: none; background: #04060D; display: flex; align-items: center; justify-content: center">
+  <div ref="{{ diveRef }}" data-portal style="position: fixed; inset: 0; z-index: 90; opacity: 0; pointer-events: none; background: #04060D; display: flex; align-items: center; justify-content: center">
     <div ref="{{ diveGlowRef }}" style="position: absolute; inset: 0; background: radial-gradient(58% 44% at 50% 50%, rgba(47,98,196,0.5), rgba(4,6,13,0) 74%)"></div>
     <div style="position: relative; display: flex; align-items: center; gap: 11px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.22em; color: #CDCED0; text-transform: uppercase">
       <span style="width: 12px; height: 12px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,0.2); border-top-color: #FFFFFF; animation: druveSpin .8s linear infinite"></span>
       <span ref="{{ diveLabelRef }}">Abrindo</span>
     </div>
   </div>
+
+  <main id="conteudo">
 
   <section id="s0" data-sec="0" data-screen-label="Hero" style="position: relative; z-index: 2; height: 100vh; display: flex; align-items: center; padding: 0 clamp(18px, 4vw, 56px)">
     <div data-panel="left" style="max-width: min(700px, 100%); display: flex; flex-direction: column; gap: clamp(14px, 2.2vh, 22px)">
@@ -146,7 +234,7 @@
         <a href="#s1" style="display: flex; align-items: center; padding: 14px 24px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.16); color: #E8EAEE; font-weight: 500; font-size: 13.5px; letter-spacing: -0.01em; background: rgba(255,255,255,0.028); transition: background 140ms cubic-bezier(.22,.61,.36,1)" style-hover="background: rgba(255,255,255,0.05)">Ver os sistemas</a>
       </div>
       <div style="display: flex; align-items: center; gap: 10px; margin-top: 26px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">
-        <span style="animation: druveHint 1.8s ease-in-out infinite">↓</span>
+        <span data-hint style="animation: druveHint 1.8s ease-in-out infinite">↓</span>
         <span>Role para explorar</span>
       </div>
     </div>
@@ -307,7 +395,7 @@
       <div data-ring aria-hidden="true" style="position: absolute; inset: -1px; border-radius: 13px; padding: 1.5px; pointer-events: none; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0)"></div>
       <div style="display: flex; flex-direction: column; align-items: center; gap: 16px">
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Três produtos, três decisões</div>
-        <h2 style="margin: 0; font-size: clamp(25px, min(4vw, 5.4vh), 52px); line-height: 1.04; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Não é um pacote. São três sistemas <em style="font-family: 'Space Grotesk', system-ui, sans-serif; font-style: normal; font-weight: 500; background-image: linear-gradient(94deg, #4A80E0, #7BA5EE); -webkit-background-clip: text; background-clip: text; color: transparent">independentes</em>.</h2>
+        <h2 style="margin: 0; font-size: clamp(25px, min(4vw, 5.4vh), 52px); line-height: 1.04; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Não é um pacote. São três sistemas <em data-metal style="font-family: 'Space Grotesk', system-ui, sans-serif; font-style: normal; font-weight: 500; background-image: linear-gradient(var(--druve-ang, 94deg), #4A80E0, #7BA5EE); -webkit-background-clip: text; background-clip: text; color: transparent">independentes</em>.</h2>
         <p style="margin: 0; max-width: 540px; font-size: 15.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">iGenda, MesaFlow e IPorte são produtos separados, com assinatura e cadastro próprios. O que eles têm em comum é quem está por trás: o mesmo time de suporte, falando a sua língua.</p>
       </div>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 1px; width: 100%; background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; overflow: hidden">
@@ -323,14 +411,14 @@
   <section id="s5" data-sec="5" data-screen-label="Dentro da tela" style="position: relative; z-index: 2; height: 100vh; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: min(74px, 9.5vh) clamp(18px, 4vw, 56px) min(24px, 3vh); text-align: center">
     <div style="display: flex; flex-direction: column; align-items: center; gap: 18px; max-width: 640px">
       <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Você está dentro</div>
-      <h2 style="margin: 0; font-size: clamp(26px, min(4.2vw, 5.8vh), 56px); line-height: 1.04; letter-spacing: -0.038em; font-weight: 500; text-wrap: balance">É assim que o seu dia <span style="background-image: linear-gradient(94deg, #4A80E0, #7BA5EE); -webkit-background-clip: text; background-clip: text; color: transparent">passa a funcionar</span></h2>
+      <h2 style="margin: 0; font-size: clamp(26px, min(4.2vw, 5.8vh), 56px); line-height: 1.04; letter-spacing: -0.038em; font-weight: 500; text-wrap: balance">É assim que o seu dia <span data-metal style="background-image: linear-gradient(var(--druve-ang, 94deg), #4A80E0, #7BA5EE); -webkit-background-clip: text; background-clip: text; color: transparent">passa a funcionar</span></h2>
       <p style="margin: 0; font-size: 15.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Continue rolando: recursos, implantação, quem já usa e como falar com a gente.</p>
       <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase"><span style="animation: druveHint 1.8s ease-in-out infinite">↓</span><span>Continue</span></div>
     </div>
   </section>
 
-  <section id="recursos" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 140px) clamp(18px, 4vw, 56px) 0">
-    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(34px, 4vw, 54px)">
+  <section id="recursos" style="position: relative; z-index: 3; padding: clamp(88px, 11vw, 168px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(28px, 3.5vw, 44px)">
       <div data-reveal style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px">
         <div style="max-width: 620px; display: flex; flex-direction: column; gap: 16px">
           <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Por que DRUVE</div>
@@ -338,7 +426,7 @@
         </div>
         <p style="margin: 0; max-width: 340px; font-size: 15px; line-height: 1.65; color: #A7A8AC; text-wrap: pretty">Nuvem, celular, computador do balcão. Rápido de aprender, difícil de abandonar.</p>
       </div>
-      <div data-reveal style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 1px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; overflow: hidden; box-shadow: 0 40px 90px -50px rgba(0,0,0,0.9)">
+      <div data-reveal data-stagger style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 1px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; overflow: hidden; box-shadow: 0 40px 90px -50px rgba(0,0,0,0.9)">
         <div style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.6vw, 34px); background: linear-gradient(170deg, rgba(10,14,28,0.78), rgba(4,6,13,0.82))">
           <div style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 6px; border: 1px solid rgba(47,98,196,0.35); background: rgba(47,98,196,0.14)">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7BA5EE" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
@@ -371,11 +459,11 @@
     </div>
   </section>
 
-  <section id="solucoes" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 130px) clamp(18px, 4vw, 56px) 0">
-    <div style="max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(32px, 5vw, 72px); align-items: start">
-      <div data-reveal style="display: flex; flex-direction: column; gap: 20px; position: sticky; top: 110px">
+  <section id="solucoes" style="position: relative; z-index: 3; padding: clamp(52px, 6.5vw, 96px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(28px, 4.5vw, 64px); align-items: start">
+      <div data-reveal style="display: flex; flex-direction: column; gap: 14px; position: sticky; top: 110px">
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Nossas soluções</div>
-        <h2 style="margin: 0; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Três sistemas, <span style="background-image: linear-gradient(94deg, #4A80E0, #7BA5EE); -webkit-background-clip: text; background-clip: text; color: transparent">três problemas</span></h2>
+        <h2 style="margin: 0; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Três sistemas, <span data-metal style="background-image: linear-gradient(var(--druve-ang, 94deg), #4A80E0, #7BA5EE); -webkit-background-clip: text; background-clip: text; color: transparent">três problemas</span></h2>
         <p style="margin: 0; font-size: 15px; line-height: 1.65; color: #A7A8AC; text-wrap: pretty">Escolha o que resolve a sua operação hoje. São produtos separados: contratar um não obriga a contratar os outros.</p>
         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 4px; font-size: 14px; color: #CDCED0">
           <div style="display: flex; align-items: center; gap: 10px"><span style="color: #7BA5EE">✓</span>Implantação e treinamento inclusos</div>
@@ -386,7 +474,7 @@
         <a href="#contato" style="align-self: flex-start; margin-top: 8px; display: flex; align-items: center; gap: 10px; padding: 13px 22px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.028); font-size: 13px; font-weight: 500; letter-spacing: -0.01em; transition: background 140ms cubic-bezier(.22,.61,.36,1)" style-hover="background: rgba(255,255,255,0.05)">Pedir proposta <span>→</span></a>
       </div>
       <div style="display: flex; flex-direction: column; gap: 16px">
-        <div data-reveal style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.8vw, 34px); border: 1px solid rgba(255,255,255,0.09); border-left: 2px solid #2F62C4; border-radius: 12px; background: linear-gradient(120deg, rgba(47,98,196,0.12), rgba(7,10,20,0.75) 55%); box-shadow: 0 30px 70px -50px rgba(0,0,0,0.9)" style-hover="border-color: rgba(47,98,196,0.45)">
+        <div data-reveal style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.6vw, 34px); border: 1px solid rgba(255,255,255,0.09); border-left: 2px solid #2F62C4; border-radius: 12px; background: linear-gradient(120deg, rgba(47,98,196,0.12), rgba(7,10,20,0.75) 55%); box-shadow: 0 30px 70px -50px rgba(0,0,0,0.9)" style-hover="border-color: rgba(47,98,196,0.45)">
           <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
             <div style="font-size: 21px; font-weight: 600; letter-spacing: -0.03em">iGenda</div>
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7BA5EE; text-transform: uppercase">Agenda + PDV</div>
@@ -398,7 +486,7 @@
             <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.14); border: 1px solid rgba(47,98,196,0.3); font-size: 12px; color: #CDCED0">Comissões</span>
           </div>
         </div>
-        <div data-reveal style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.8vw, 34px); border: 1px solid rgba(255,255,255,0.09); border-left: 2px solid #2F62C4; border-radius: 12px; background: linear-gradient(120deg, rgba(47,98,196,0.10), rgba(7,10,20,0.75) 55%); box-shadow: 0 30px 70px -50px rgba(0,0,0,0.9)" style-hover="border-color: rgba(47,98,196,0.4)">
+        <div data-reveal style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.6vw, 34px); border: 1px solid rgba(255,255,255,0.09); border-left: 2px solid #2F62C4; border-radius: 12px; background: linear-gradient(120deg, rgba(47,98,196,0.10), rgba(7,10,20,0.75) 55%); box-shadow: 0 30px 70px -50px rgba(0,0,0,0.9)" style-hover="border-color: rgba(47,98,196,0.4)">
           <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
             <div style="font-size: 21px; font-weight: 600; letter-spacing: -0.03em">MesaFlow</div>
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #4A80E0; text-transform: uppercase">Salão + cozinha</div>
@@ -410,7 +498,7 @@
             <span style="padding: 6px 12px; border-radius: 999px; background: rgba(47,98,196,0.12); border: 1px solid rgba(47,98,196,0.28); font-size: 12px; color: #CDCED0">Delivery</span>
           </div>
         </div>
-        <div data-reveal style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.8vw, 34px); border: 1px solid rgba(255,255,255,0.09); border-left: 2px solid #2F62C4; border-radius: 12px; background: linear-gradient(120deg, rgba(47,98,196,0.10), rgba(7,10,20,0.75) 55%); box-shadow: 0 30px 70px -50px rgba(0,0,0,0.9)" style-hover="border-color: rgba(47,98,196,0.4)">
+        <div data-reveal style="display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.6vw, 34px); border: 1px solid rgba(255,255,255,0.09); border-left: 2px solid #2F62C4; border-radius: 12px; background: linear-gradient(120deg, rgba(47,98,196,0.10), rgba(7,10,20,0.75) 55%); box-shadow: 0 30px 70px -50px rgba(0,0,0,0.9)" style-hover="border-color: rgba(47,98,196,0.4)">
           <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px">
             <div style="font-size: 21px; font-weight: 600; letter-spacing: -0.03em">IPorte</div>
             <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #4A80E0; text-transform: uppercase">Financeiro</div>
@@ -426,24 +514,24 @@
     </div>
   </section>
 
-  <section id="implantacao" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 130px) clamp(18px, 4vw, 56px) 0">
-    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(30px, 4vw, 48px)">
+  <section id="implantacao" style="position: relative; z-index: 3; padding: clamp(52px, 6.5vw, 96px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(28px, 3.5vw, 44px)">
       <div data-reveal style="display: flex; flex-direction: column; gap: 14px; max-width: 620px">
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Como começa</div>
         <h2 style="margin: 0; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Do primeiro contato ao sistema rodando em uma semana.</h2>
       </div>
-      <div data-reveal style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: clamp(16px, 2vw, 24px)">
-        <div style="display: flex; flex-direction: column; gap: 12px; padding: clamp(22px, 2.4vw, 30px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(7,10,20,0.6)">
+      <div data-reveal data-stagger style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: clamp(16px, 2vw, 24px)">
+        <div style="display: flex; flex-direction: column; gap: 12px; padding: clamp(18px, 2vw, 26px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(7,10,20,0.6)">
           <div style="display: flex; align-items: center; gap: 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #7A7B7F">ETAPA 01</span><span style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(47,98,196,0.6), rgba(47,98,196,0))"></span></div>
           <div style="font-size: 17px; font-weight: 600; letter-spacing: -0.025em">Diagnóstico de 30 min</div>
           <div style="font-size: 14px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Entendemos sua operação e mostramos o sistema com a cara do seu negócio — sem apresentação genérica.</div>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 12px; padding: clamp(22px, 2.4vw, 30px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(7,10,20,0.6)">
+        <div style="display: flex; flex-direction: column; gap: 12px; padding: clamp(18px, 2vw, 26px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(7,10,20,0.6)">
           <div style="display: flex; align-items: center; gap: 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #7A7B7F">ETAPA 02</span><span style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(47,98,196,0.6), rgba(47,98,196,0))"></span></div>
           <div style="font-size: 17px; font-weight: 600; letter-spacing: -0.025em">Implantação assistida</div>
           <div style="font-size: 14px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Importamos clientes, produtos e serviços, configuramos formas de pagamento e treinamos o time.</div>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 12px; padding: clamp(22px, 2.4vw, 30px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(7,10,20,0.6)">
+        <div style="display: flex; flex-direction: column; gap: 12px; padding: clamp(18px, 2vw, 26px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(7,10,20,0.6)">
           <div style="display: flex; align-items: center; gap: 12px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: #7A7B7F">ETAPA 03</span><span style="flex: 1; height: 1px; background: linear-gradient(90deg, rgba(47,98,196,0.6), rgba(47,98,196,0))"></span></div>
           <div style="font-size: 17px; font-weight: 600; letter-spacing: -0.025em">Acompanhamento</div>
           <div style="font-size: 14px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Nos primeiros 60 dias revisamos os números com você e ajustamos o que estiver travando.</div>
@@ -452,27 +540,27 @@
     </div>
   </section>
 
-  <section id="vozes" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 130px) clamp(18px, 4vw, 56px) 0">
+  <section id="vozes" style="position: relative; z-index: 3; padding: clamp(88px, 11vw, 168px) clamp(18px, 4vw, 56px) 0">
     <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(28px, 3.5vw, 44px)">
       <div data-reveal style="display: flex; flex-direction: column; gap: 14px; max-width: 560px">
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Quem já usa</div>
         <h2 style="margin: 0; font-size: clamp(28px, 3.6vw, 46px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">Feito para quem atende gente todos os dias.</h2>
       </div>
-      <div data-reveal style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: clamp(16px, 2vw, 22px)">
-        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 22px; padding: clamp(24px, 2.6vw, 32px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: linear-gradient(165deg, rgba(10,14,28,0.7), rgba(7,10,20,0.72))">
+      <div data-reveal data-stagger style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr)); gap: clamp(16px, 2vw, 22px)">
+        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 22px; padding: clamp(24px, 2.6vw, 34px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: linear-gradient(165deg, rgba(10,14,28,0.7), rgba(7,10,20,0.72))">
           <div style="font-size: 15.5px; line-height: 1.65; color: #DEDFE1; text-wrap: pretty">“Cortamos 70% dos furos de agenda. O cliente confirma sozinho e o caixa fecha certo — a gente parou de brigar com planilha.”</div>
           <div style="display: flex; align-items: center; gap: 12px"><span style="width: 34px; height: 34px; border-radius: 999px; background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">RS</span><span style="display: flex; flex-direction: column; font-size: 13px"><span style="font-weight: 600">Rafael Souza</span><span style="color: #7A7B7F">Barbearia Nove · iGenda</span></span></div>
         </div>
-        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 22px; padding: clamp(24px, 2.6vw, 32px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: linear-gradient(165deg, rgba(10,14,28,0.7), rgba(7,10,20,0.72))">
+        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 22px; padding: clamp(24px, 2.6vw, 34px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: linear-gradient(165deg, rgba(10,14,28,0.7), rgba(7,10,20,0.72))">
           <div style="font-size: 15.5px; line-height: 1.65; color: #DEDFE1; text-wrap: pretty">“A cozinha recebe o pedido no segundo em que sai da mesa. Reduzimos o tempo de entrega do prato em 9 minutos.”</div>
           <div style="display: flex; align-items: center; gap: 12px"><span style="width: 34px; height: 34px; border-radius: 999px; background: linear-gradient(140deg, #2F62C4, #D9736B); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">CM</span><span style="display: flex; flex-direction: column; font-size: 13px"><span style="font-weight: 600">Carla Moreira</span><span style="color: #7A7B7F">Trattoria Bell · MesaFlow</span></span></div>
         </div>
-        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 22px; padding: clamp(24px, 2.6vw, 32px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: linear-gradient(165deg, rgba(10,14,28,0.7), rgba(7,10,20,0.72))">
+        <div style="display: flex; flex-direction: column; justify-content: space-between; gap: 22px; padding: clamp(24px, 2.6vw, 34px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: linear-gradient(165deg, rgba(10,14,28,0.7), rgba(7,10,20,0.72))">
           <div style="font-size: 15.5px; line-height: 1.65; color: #DEDFE1; text-wrap: pretty">“Pela primeira vez sei o saldo do mês que vem antes de ele chegar. O alerta de caixa já me salvou duas vezes.”</div>
           <div style="display: flex; align-items: center; gap: 12px"><span style="width: 34px; height: 34px; border-radius: 999px; background: linear-gradient(140deg, #2F62C4, #2F62C4); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">JL</span><span style="display: flex; flex-direction: column; font-size: 13px"><span style="font-weight: 600">Juliana Lima</span><span style="color: #7A7B7F">Clínica Vitalis · IPorte</span></span></div>
         </div>
       </div>
-      <div data-reveal style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 6px">
+      <div data-reveal data-stagger style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 6px">
         <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-size: 13px; color: #B1B2B4">Barbearias</span>
         <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-size: 13px; color: #B1B2B4">Salões de beleza</span>
         <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); font-size: 13px; color: #B1B2B4">Clínicas e consultórios</span>
@@ -484,14 +572,14 @@
     </div>
   </section>
 
-  <section id="faq" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 130px) clamp(18px, 4vw, 56px) 0">
-    <div style="max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(28px, 4vw, 56px)">
+  <section id="faq" style="position: relative; z-index: 3; padding: clamp(52px, 6.5vw, 96px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(28px, 4.5vw, 64px)">
       <div data-reveal style="display: flex; flex-direction: column; gap: 14px">
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Dúvidas frequentes</div>
         <h2 style="margin: 0; font-size: clamp(28px, 3.6vw, 44px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; text-wrap: balance">O que todo mundo pergunta antes de assinar.</h2>
         <p style="margin: 0; max-width: 380px; font-size: 15px; line-height: 1.65; color: #A7A8AC; text-wrap: pretty">Ficou algo de fora? Fale com um especialista — respondemos em minutos, em horário comercial.</p>
       </div>
-      <div data-reveal style="display: flex; flex-direction: column">
+      <div data-reveal data-stagger style="display: flex; flex-direction: column">
         <div style="display: flex; flex-direction: column; gap: 8px; padding: 22px 0; border-top: 1px solid rgba(255,255,255,0.09)">
           <div style="font-size: 16px; font-weight: 600; letter-spacing: -0.02em">Preciso contratar os três sistemas?</div>
           <div style="font-size: 14.5px; line-height: 1.6; color: #A7A8AC; text-wrap: pretty">Não. São produtos separados e independentes — você assina apenas o sistema que faz sentido para o seu negócio.</div>
@@ -516,24 +604,24 @@
     </div>
   </section>
 
-  <section id="contato" data-screen-label="Contato" style="position: relative; z-index: 3; padding: clamp(72px, 9vw, 130px) clamp(18px, 4vw, 56px) 0">
-    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(24px, 3vw, 36px)">
+  <section id="contato" data-screen-label="Contato" style="position: relative; z-index: 3; padding: clamp(88px, 11vw, 168px) clamp(18px, 4vw, 56px) 0">
+    <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: clamp(28px, 3.5vw, 44px)">
       <div data-reveal style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: clamp(24px, 4vw, 48px); padding: clamp(28px, 4vw, 54px); border: 1px solid rgba(47,98,196,0.28); border-radius: 12px; background: linear-gradient(115deg, rgba(47,98,196,0.22), rgba(47,98,196,0.12) 45%, rgba(7,10,20,0.85)); box-shadow: 0 10px 26px -14px rgba(0,0,0,0.75)">
         <div style="max-width: 560px; display: flex; flex-direction: column; gap: 16px">
           <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #7BA5EE; text-transform: uppercase">Pronto para começar?</div>
-          <h2 style="margin: 0; font-size: clamp(28px, 4vw, 50px); line-height: 1.02; letter-spacing: -0.038em; font-weight: 500; text-wrap: balance">Coloque seu negócio no <span style="background-image: linear-gradient(94deg, #7BA5EE, #E8EAEE); -webkit-background-clip: text; background-clip: text; color: transparent">piloto automático</span></h2>
+          <h2 style="margin: 0; font-size: clamp(28px, 4vw, 50px); line-height: 1.02; letter-spacing: -0.038em; font-weight: 500; text-wrap: balance">Coloque seu negócio no <span data-metal style="background-image: linear-gradient(var(--druve-ang, 94deg), #7BA5EE, #E8EAEE); -webkit-background-clip: text; background-clip: text; color: transparent">piloto automático</span></h2>
           <p style="margin: 0; font-size: 15.5px; line-height: 1.6; color: #CDCED0; text-wrap: pretty">30 minutos de conversa, sem compromisso. A gente mostra o sistema rodando com a cara do seu negócio.</p>
         </div>
         <div style="display: flex; flex-direction: column; gap: 12px; min-width: min(260px, 100%)">
-          <a href="#contato" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-radius: 4px; border: 1px solid rgba(207,211,218,0.35); background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 26px -14px rgba(0,0,0,0.8); color: #070A14; font-weight: 600; font-size: 13.5px; letter-spacing: -0.01em; transition: filter 140ms cubic-bezier(.22,.61,.36,1)" style-hover="filter: brightness(1.05)">Agendar demonstração <span>↗</span></a>
-          <a href="#contato" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.028); color: #E8EAEE; font-weight: 500; font-size: 13.5px; letter-spacing: -0.01em; transition: background 140ms cubic-bezier(.22,.61,.36,1)" style-hover="background: rgba(255,255,255,0.05)">Falar no WhatsApp <span>→</span></a>
+          <a href="https://wa.me/5531983616906?text=Ol%C3%A1%21%20Quero%20agendar%20uma%20demonstra%C3%A7%C3%A3o%20dos%20sistemas%20DRUVE." rel="noopener" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-radius: 4px; border: 1px solid rgba(207,211,218,0.35); background: linear-gradient(168deg, #F4F5F7 0%, #C6CAD1 20%, #EDEEF1 40%, #9DA3AC 62%, #D9DCE1 80%, #A8ADB5 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 10px 26px -14px rgba(0,0,0,0.8); color: #070A14; font-weight: 600; font-size: 13.5px; letter-spacing: -0.01em; transition: filter 140ms cubic-bezier(.22,.61,.36,1)" style-hover="filter: brightness(1.05)">Agendar demonstração <span>↗</span></a>
+          <a href="mailto:comercial@druve.com.br?subject=Demonstra%C3%A7%C3%A3o%20DRUVE" style="display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.028); color: #E8EAEE; font-weight: 500; font-size: 13.5px; letter-spacing: -0.01em; transition: background 140ms cubic-bezier(.22,.61,.36,1)" style-hover="background: rgba(255,255,255,0.05)">Falar por e-mail <span>→</span></a>
           <div style="font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.12em; color: #A7A8AC; text-align: center; margin-top: 4px">SEG A SEX, 9H–18H</div>
         </div>
       </div>
 
-      <div data-reveal style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 1px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; overflow: hidden">
-        <div style="display: flex; flex-direction: column; gap: 6px; padding: 24px; background: rgba(7,10,20,0.7)"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Comercial</span><span style="font-size: 15px; color: #DEDFE1">comercial@druve.com.br</span></div>
-        <div style="display: flex; flex-direction: column; gap: 6px; padding: 24px; background: rgba(7,10,20,0.7)"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Suporte</span><span style="font-size: 15px; color: #DEDFE1">suporte@druve.com.br</span></div>
+      <div data-reveal data-stagger style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 1px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; overflow: hidden">
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 24px; background: rgba(7,10,20,0.7)"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Comercial</span><a href="mailto:comercial@druve.com.br" style="font-size: 15px; color: #DEDFE1" style-hover="color: #FFFFFF">comercial@druve.com.br</a></div>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 24px; background: rgba(7,10,20,0.7)"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Suporte</span><a href="mailto:suporte@druve.com.br" style="font-size: 15px; color: #DEDFE1" style-hover="color: #FFFFFF">suporte@druve.com.br</a></div>
         <div style="display: flex; flex-direction: column; gap: 6px; padding: 24px; background: rgba(7,10,20,0.7)"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">WhatsApp</span><a href="https://wa.me/5531983616906" rel="noopener" style="font-size: 15px; color: #DEDFE1" style-hover="color: #FFFFFF">(31) 98361-6906</a></div>
         <div style="display: flex; flex-direction: column; gap: 6px; padding: 24px; background: rgba(7,10,20,0.7)"><span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Onde estamos</span><span style="font-size: 15px; color: #DEDFE1; line-height: 1.45">Contagem/MG<br /><span style="color: #7A7B7F; font-size: 13.5px">Rua Bragança, 60 — Santa Cruz Industrial</span></span></div>
       </div>
@@ -562,10 +650,10 @@
             <a href="#faq" style="color: #A7A8AC">Dúvidas</a>
           </div>
           <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13.5px">
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Legal</span>
-            <a href="#contato" style="color: #A7A8AC">Termos de uso</a>
-            <a href="#contato" style="color: #A7A8AC">Privacidade</a>
-            <a href="#contato" style="color: #A7A8AC">LGPD</a>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; color: #7A7B7F; text-transform: uppercase">Contato</span>
+            <a href="https://wa.me/5531983616906" rel="noopener" style="color: #A7A8AC" style-hover="color: #E8EAEE">WhatsApp</a>
+            <a href="mailto:comercial@druve.com.br" style="color: #A7A8AC" style-hover="color: #E8EAEE">Comercial</a>
+            <a href="mailto:suporte@druve.com.br" style="color: #A7A8AC" style-hover="color: #E8EAEE">Suporte</a>
           </div>
         </div>
         <div style="display: flex; flex-direction: column; gap: 6px; padding: 18px 0; border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 12.5px; line-height: 1.65; color: #7A7B7F">
@@ -581,6 +669,8 @@
       </footer>
     </div>
   </section>
+
+  </main>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#2F62C4&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#2F62C4&quot;,&quot;#2F62C4&quot;,&quot;#2F62C4&quot;,&quot;#2F62C4&quot;],&quot;section&quot;:&quot;Marca&quot;},&quot;igendaUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://igenda.druve.com.br&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Acessar os sistemas&quot;},&quot;mesaflowUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://mesaflow.druve.com.br&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Acessar os sistemas&quot;},&quot;iporteUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://iporte.druve.com.br&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Acessar os sistemas&quot;},&quot;igendaDetailUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;/igenda&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Páginas de detalhe&quot;},&quot;mesaflowDetailUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;/mesaflow&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Páginas de detalhe&quot;},&quot;iporteDetailUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;/iporte&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Páginas de detalhe&quot;},&quot;notebookFinish&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;grafite&quot;,&quot;options&quot;:[&quot;grafite&quot;,&quot;prata&quot;,&quot;preto&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Notebook&quot;},&quot;motionAmount&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.4,&quot;max&quot;:1.6,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Movimento&quot;},&quot;pointerParallax&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Movimento&quot;}}">
@@ -607,6 +697,18 @@ class Component extends DCLogic {
     this.cur = null;
     this.mouse = { x: 0, y: 0 };
     this.screenIdx = -1;
+    // uma fonte de verdade para movimento. Quem pede menos animação perde a
+    // simulação das telas, o parallax e a coreografia de scroll — mas continua
+    // vendo a cena, a troca de seção e todo o conteúdo.
+    const mq = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.calmo = !!(mq && mq.matches);
+    if (mq && mq.addEventListener) mq.addEventListener('change', (e) => {
+      this.calmo = e.matches;
+      this.liveScreens = !this.calmo && !this.lowTier && !this.softRender;
+      if (this.calmo && this.screenCanvases) { this._simIdx = null; this.paintScreens(); }
+      document.documentElement.classList.toggle('druve-calmo', this.calmo);
+    });
+    if (this.calmo) document.documentElement.classList.add('druve-calmo');
     this.onPointer = (e) => {
       this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       this.mouse.y = (e.clientY / window.innerHeight) * 2 - 1;
@@ -638,6 +740,12 @@ class Component extends DCLogic {
   initReveal() {
     const els = Array.from(document.querySelectorAll('[data-reveal]'));
     if (!els.length) return;
+    // Onde há linha do tempo de scroll, quem revela é o CSS: o relógio passa a
+    // ser a posição da rolagem, não um observer disparando transições. Sai JS do
+    // caminho quente e a entrada fica reversível ao rolar para trás.
+    // Sem suporte (Firefox hoje), o IntersectionObserver abaixo segue valendo.
+    this.cssReveal = !this.calmo && !!(window.CSS && CSS.supports && CSS.supports('animation-timeline', 'view()'));
+    if (this.cssReveal) { document.documentElement.classList.add('druve-css-reveal'); return; }
     const show = (el) => {
       el.style.opacity = '1';
       el.style.transform = 'none';
@@ -1086,8 +1194,13 @@ class Component extends DCLogic {
     return cv;
   }
 
-  paintScreens() {
+  // Os painters recebem (c, t): `t` é o relógio da simulação em segundos, zerado
+  // toda vez que a seção troca. Com t=0 cada tela desenha o estado final estático,
+  // que é exatamente o fallback de quem não roda a simulação.
+  screenPainters() {
     const A = this.accent();
+    if (this._painters && this._paintersA === A) return this._painters;
+    this._paintersA = A;
     const chrome = (c, tint, title, tabs) => {
       c.fillStyle = '#04060D'; c.fillRect(0, 0, 1536, 960);
       c.fillStyle = '#0E1425'; c.fillRect(0, 0, 250, 960);
@@ -1132,15 +1245,21 @@ class Component extends DCLogic {
         c.textAlign = 'left';
       },
       // 1 — iGenda
-      (c) => {
+      (c, t) => {
         const tint = '#2F62C4';
+        const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
         chrome(c, tint, 'iGenda', ['Agenda', 'Clientes', 'PDV', 'Serviços', 'Relatórios', 'Ajustes']);
+        const cols = ['Rafael', 'Bia', 'Léo', 'Dani'];
+        const x0 = 400, cw = 262, y0 = 232;
+        const appts = [[0, 0, 1.6, 'Corte + barba'], [1, 1, 1, 'Escova'], [2, 0, 2, 'Coloração'], [0, 3, 1.2, 'Corte social'], [3, 2, 1.5, 'Progressiva'], [1, 4, 1, 'Sobrancelha'], [2, 5, 1.8, 'Luzes'], [0, 6, 1, 'Barba'], [3, 5, 1, 'Hidratação']];
+        // t=0 devolve 1 em tudo: o estado final é exatamente a tela estática de antes
+        const land = (i) => t <= 0 ? 1 : ease((t - (0.28 + i * 0.24)) / 0.5);
+        const done = appts.reduce((n, _, i) => n + (land(i) > 0.55 ? 1 : 0), 0);
+        const prog = done / appts.length;
         c.fillStyle = '#E8EAEE'; c.font = '600 34px "Space Grotesk", sans-serif';
         c.fillText('Agenda de hoje', 296, 140);
         c.fillStyle = '#7A7B7F'; c.font = '400 19px "Space Grotesk", sans-serif';
-        c.fillText('Quinta, 30 de julho · 14 atendimentos', 296, 180);
-        const cols = ['Rafael', 'Bia', 'Léo', 'Dani'];
-        const x0 = 400, cw = 262, y0 = 232;
+        c.fillText('Quinta, 30 de julho · ' + Math.round(14 * prog) + ' atendimentos', 296, 180);
         c.font = '400 17px "JetBrains Mono", monospace';
         for (let h = 0; h < 8; h++) {
           const y = y0 + 40 + h * 82;
@@ -1151,29 +1270,53 @@ class Component extends DCLogic {
           c.fillStyle = '#A7A8AC'; c.font = '500 19px "Space Grotesk", sans-serif';
           c.fillText(n, x0 + i * cw + 14, y0);
         });
-        const appts = [[0, 0, 1.6, 'Corte + barba'], [1, 1, 1, 'Escova'], [2, 0, 2, 'Coloração'], [0, 3, 1.2, 'Corte social'], [3, 2, 1.5, 'Progressiva'], [1, 4, 1, 'Sobrancelha'], [2, 5, 1.8, 'Luzes'], [0, 6, 1, 'Barba'], [3, 5, 1, 'Hidratação']];
         appts.forEach(([col, hr, dur, label], i) => {
+          const a = land(i);
+          if (a <= 0) return;
           const x = x0 + col * cw, y = y0 + 22 + hr * 82, h = dur * 82 - 12;
+          c.save();
+          c.globalAlpha = a;
+          // sobe 14px enquanto pousa: movimento secundário, não só opacidade
+          c.translate(0, (1 - a) * 14);
           c.fillStyle = i % 3 === 0 ? 'rgba(47,98,196,0.26)' : 'rgba(47,98,196,0.15)';
           this.rr(c, x, y, cw - 18, h, 10); c.fill();
-          c.fillStyle = tint; c.fillRect(x, y + 6, 3, h - 12);
+          // a barra de acento preenche de cima para baixo — o horário "carrega"
+          c.fillStyle = tint; c.fillRect(x, y + 6, 3, (h - 12) * a);
           c.fillStyle = '#CDCED0'; c.font = '500 18px "Space Grotesk", sans-serif';
           c.fillText(label, x + 16, y + 26);
           c.fillStyle = '#8A8D93'; c.font = '400 15px "JetBrains Mono", monospace';
           c.fillText((9 + hr) + ':00', x + 16, y + 52);
+          c.restore();
         });
+        // linha do "agora" descendo o dia conforme a agenda enche
+        if (t > 0 && prog < 1) {
+          const ny = y0 + 22 + Math.min(7.4, prog * 8.2) * 82;
+          c.strokeStyle = 'rgba(123,165,238,0.5)'; c.lineWidth = 2;
+          c.beginPath(); c.moveTo(388, ny); c.lineTo(1476, ny); c.stroke();
+          c.fillStyle = '#7BA5EE'; c.beginPath(); c.arc(388, ny, 5, 0, Math.PI * 2); c.fill();
+          c.lineWidth = 1;
+        }
         c.fillStyle = '#0A0E1B'; this.rr(c, 1130, 108, 346, 96, 14); c.fill();
         c.strokeStyle = '#1B2544'; c.stroke();
         c.fillStyle = '#7A7B7F'; c.font = '400 16px "Space Grotesk", sans-serif'; c.fillText('Faturamento do dia', 1156, 140);
-        c.fillStyle = '#E8EAEE'; c.font = '600 32px "Space Grotesk", sans-serif'; c.fillText('R$ 2.480,00', 1156, 178);
+        c.fillStyle = '#E8EAEE'; c.font = '600 32px "Space Grotesk", sans-serif';
+        c.fillText('R$ ' + (2480 * prog).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), 1156, 178);
       },
       // 2 — MesaFlow
-      (c) => {
+      (c, t) => {
         const tint = '#2F62C4';
+        // um pedido sai da cozinha a cada ciclo; a mesa 4 fecha a conta, libera e enche de novo
+        const CYC = 4.6;
+        const turn = t <= 0 ? 0 : t / CYC;
+        const step = Math.floor(turn);
+        const slide = t <= 0 ? 0 : 1 - Math.pow(1 - Math.max(0, Math.min(1, (turn - step) / 0.5)), 3);
         chrome(c, tint, 'MesaFlow', ['Salão', 'Comandas', 'Cardápio', 'Cozinha', 'Delivery', 'Caixa']);
-        c.fillStyle = '#E8EAEE'; c.font = '600 34px "Space Grotesk", sans-serif'; c.fillText('Salão', 296, 140);
-        c.fillStyle = '#7A7B7F'; c.font = '400 19px "Space Grotesk", sans-serif'; c.fillText('11 de 18 mesas ocupadas', 296, 180);
         const states = ['open', 'open', 'free', 'bill', 'open', 'free', 'open', 'open', 'bill', 'free', 'open', 'open'];
+        if (t > 0) states[3] = ['bill', 'free', 'open'][step % 3];
+        c.fillStyle = '#E8EAEE'; c.font = '600 34px "Space Grotesk", sans-serif'; c.fillText('Salão', 296, 140);
+        c.fillStyle = '#7A7B7F'; c.font = '400 19px "Space Grotesk", sans-serif';
+        c.fillText((states[3] === 'free' ? 10 : 11) + ' de 18 mesas ocupadas', 296, 180);
+        const mesaMin = 32 + (t <= 0 ? 0 : Math.floor(t / 20));
         states.forEach((st, i) => {
           const x = 296 + (i % 4) * 208, y = 226 + Math.floor(i / 4) * 176;
           const fill = st === 'free' ? '#0E1425' : st === 'bill' ? 'rgba(47,98,196,0.17)' : 'rgba(255,255,255,0.05)';
@@ -1183,34 +1326,57 @@ class Component extends DCLogic {
           c.fillText('M' + (i + 1), x + 20, y + 42);
           c.font = '400 16px "Space Grotesk", sans-serif';
           c.fillStyle = st === 'free' ? '#3A3D45' : st === 'bill' ? tint : '#8A8D93';
-          c.fillText(st === 'free' ? 'Livre' : st === 'bill' ? 'Fechando conta' : '4 pessoas · 32 min', x + 20, y + 80);
+          c.fillText(st === 'free' ? 'Livre' : st === 'bill' ? 'Fechando conta' : '4 pessoas · ' + mesaMin + ' min', x + 20, y + 80);
           if (st !== 'free') { c.fillStyle = '#CDCED0'; c.font = '600 22px "Space Grotesk", sans-serif'; c.fillText('R$ ' + (86 + i * 13) + ',00', x + 20, y + 122); }
         });
+        c.lineWidth = 1;
         c.fillStyle = '#0A0E1B'; c.fillRect(1140, 85, 396, 875);
         c.fillStyle = '#141C33'; c.fillRect(1140, 85, 1, 875);
         c.fillStyle = '#E8EAEE'; c.font = '600 22px "Space Grotesk", sans-serif'; c.fillText('Cozinha · agora', 1172, 132);
-        [['Mesa 4', 'Picanha ao ponto ×2', '3 min'], ['Mesa 7', 'Risoto de funghi', '6 min'], ['Delivery', 'Combo família', '9 min'], ['Mesa 1', 'Tábua de frios', '11 min'], ['Balcão', 'Chopp 500ml ×4', '12 min']].forEach((t, i) => {
-          const y = 176 + i * 118;
+        // a fila anda: o pedido do topo sai pronto e um novo entra embaixo.
+        // Cada ficha carrega o próprio tempo de espera — não há relógio global
+        // envelhecendo a lista inteira, que seria mentira.
+        const fila = [['Mesa 4', 'Picanha ao ponto ×2', '3 min'], ['Mesa 7', 'Risoto de funghi', '6 min'], ['Delivery', 'Combo família', '9 min'], ['Mesa 1', 'Tábua de frios', '11 min'], ['Balcão', 'Chopp 500ml ×4', '12 min'], ['Mesa 9', 'Moqueca para dois', '2 min'], ['Delivery', 'Executivo do dia', '5 min'], ['Mesa 2', 'Salmão grelhado', '8 min']];
+        c.save();
+        c.beginPath(); c.rect(1140, 150, 396, 810); c.clip();
+        for (let k = 0; k < 6; k++) {
+          const it = fila[(step + k) % fila.length];
+          const a = k === 0 ? 1 - slide : k === 5 ? slide : 1;
+          if (a <= 0.01) continue;
+          const y = 176 + k * 118 - slide * 118;
+          c.globalAlpha = a;
           c.fillStyle = 'rgba(255,255,255,0.04)'; this.rr(c, 1172, y, 332, 98, 12); c.fill();
-          c.fillStyle = tint; c.font = '500 15px "JetBrains Mono", monospace'; c.fillText(t[0].toUpperCase(), 1192, y + 30);
-          c.fillStyle = '#DEDFE1'; c.font = '400 20px "Space Grotesk", sans-serif'; c.fillText(t[1], 1192, y + 62);
-          c.fillStyle = '#7A7B7F'; c.font = '400 16px "JetBrains Mono", monospace'; c.fillText(t[2], 1192, y + 86);
-        });
+          c.fillStyle = tint; c.font = '500 15px "JetBrains Mono", monospace'; c.fillText(it[0].toUpperCase(), 1192, y + 30);
+          c.fillStyle = '#DEDFE1'; c.font = '400 20px "Space Grotesk", sans-serif'; c.fillText(it[1], 1192, y + 62);
+          c.fillStyle = '#7A7B7F'; c.font = '400 16px "JetBrains Mono", monospace'; c.fillText(it[2], 1192, y + 86);
+        }
+        c.restore();
       },
       // 3 — IPorte
-      (c) => {
+      (c, t) => {
         const tint = '#2F62C4';
+        const ease = (u) => 1 - Math.pow(1 - Math.max(0, Math.min(1, u)), 3);
+        const bal = t <= 0 ? 1 : ease(t / 1.5);
+        const al = t <= 0 ? 1 : ease((t - 2.1) / 0.7);
+        const br = (v) => Math.round(v).toLocaleString('pt-BR');
         chrome(c, tint, 'IPorte', ['Visão geral', 'Fluxo de caixa', 'Contas', 'Projeções', 'Alertas', 'Contador']);
         c.fillStyle = '#7A7B7F'; c.font = '400 19px "Space Grotesk", sans-serif'; c.fillText('Saldo consolidado · julho', 296, 136);
-        c.fillStyle = '#F2F3F5'; c.font = '600 72px "Space Grotesk", sans-serif'; c.fillText('R$ 148.320', 296, 196);
-        c.fillStyle = tint; c.font = '500 22px "Space Grotesk", sans-serif'; c.fillText('▲ 12,4% vs. junho', 296, 250);
+        c.fillStyle = '#F2F3F5'; c.font = '600 72px "Space Grotesk", sans-serif'; c.fillText('R$ ' + br(148320 * bal), 296, 196);
+        c.save(); c.globalAlpha = bal;
+        c.fillStyle = tint; c.font = '500 22px "Space Grotesk", sans-serif';
+        c.fillText('▲ ' + (12.4 * bal).toFixed(1).replace('.', ',') + '% vs. junho', 296, 250);
+        c.restore();
         const cx = 296, cy = 300, cw = 780, ch = 300;
         c.fillStyle = '#0A0E1B'; this.rr(c, cx, cy, cw, ch, 14); c.fill();
         c.strokeStyle = '#141C33'; c.lineWidth = 1; c.stroke();
         const vals = [0.42, 0.55, 0.48, 0.66, 0.58, 0.74, 0.69, 0.82, 0.76, 0.9, 0.85, 0.97];
         const bw = 40, gap = (cw - 80 - vals.length * bw) / (vals.length - 1);
+        // as barras sobem do zero, escalonadas da esquerda para a direita
         vals.forEach((v, i) => {
-          const h = v * (ch - 90), x = cx + 40 + i * (bw + gap), y = cy + ch - 44 - h;
+          const a = t <= 0 ? 1 : ease((t - 0.12 - i * 0.055) / 0.55);
+          if (a <= 0) return;
+          const h = v * (ch - 90) * a, x = cx + 40 + i * (bw + gap), y = cy + ch - 44 - h;
+          if (h < 1) return;
           const g = c.createLinearGradient(0, y, 0, y + h);
           g.addColorStop(0, i === vals.length - 1 ? tint : 'rgba(47,98,196,0.55)');
           g.addColorStop(1, 'rgba(47,98,196,0.06)');
@@ -1220,21 +1386,28 @@ class Component extends DCLogic {
         ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'].forEach((m, i) => {
           c.fillText(m, cx + 40 + i * (bw + gap) + bw / 2 - 4, cy + ch - 18);
         });
-        [['A receber', 'R$ 32.410', '18 títulos'], ['A pagar', 'R$ 19.780', '7 títulos'], ['Projeção 30d', 'R$ 161.050', 'confiança alta']].forEach((t, i) => {
+        [['A receber', 32410, '18 títulos'], ['A pagar', 19780, '7 títulos'], ['Projeção 30d', 161050, 'confiança alta']].forEach((kpi, i) => {
           const y = 108 + i * 132;
           c.fillStyle = '#0A0E1B'; this.rr(c, 1116, y, 388, 112, 14); c.fill();
           c.strokeStyle = '#141C33'; c.stroke();
-          c.fillStyle = '#7A7B7F'; c.font = '400 16px "Space Grotesk", sans-serif'; c.fillText(t[0], 1144, y + 34);
-          c.fillStyle = '#E8EAEE'; c.font = '600 34px "Space Grotesk", sans-serif'; c.fillText(t[1], 1144, y + 74);
-          c.fillStyle = '#5D5E60'; c.font = '400 15px "JetBrains Mono", monospace'; c.fillText(t[2], 1144, y + 100);
+          c.fillStyle = '#7A7B7F'; c.font = '400 16px "Space Grotesk", sans-serif'; c.fillText(kpi[0], 1144, y + 34);
+          c.fillStyle = '#E8EAEE'; c.font = '600 34px "Space Grotesk", sans-serif'; c.fillText('R$ ' + br(kpi[1] * bal), 1144, y + 74);
+          c.fillStyle = '#5D5E60'; c.font = '400 15px "JetBrains Mono", monospace'; c.fillText(kpi[2], 1144, y + 100);
         });
-        c.fillStyle = 'rgba(47,98,196,0.10)'; this.rr(c, 1116, 508, 388, 172, 14); c.fill();
-        c.strokeStyle = 'rgba(47,98,196,0.35)'; c.stroke();
-        c.fillStyle = tint; c.font = '500 15px "JetBrains Mono", monospace'; c.fillText('ALERTA INTELIGENTE', 1144, 542);
-        c.fillStyle = '#CDCED0'; c.font = '400 21px "Space Grotesk", sans-serif';
-        c.fillText('Dia 12 o saldo fica abaixo', 1144, 586);
-        c.fillText('da reserva. Antecipar 3', 1144, 618);
-        c.fillText('recebíveis resolve.', 1144, 650);
+        // o alerta chega por último: é o sistema notando algo, não um cartão a mais
+        if (al > 0.01) {
+          c.save();
+          c.globalAlpha = al;
+          c.translate(0, (1 - al) * 12);
+          c.fillStyle = 'rgba(47,98,196,0.10)'; this.rr(c, 1116, 508, 388, 172, 14); c.fill();
+          c.strokeStyle = 'rgba(47,98,196,0.35)'; c.stroke();
+          c.fillStyle = tint; c.font = '500 15px "JetBrains Mono", monospace'; c.fillText('ALERTA INTELIGENTE', 1144, 542);
+          c.fillStyle = '#CDCED0'; c.font = '400 21px "Space Grotesk", sans-serif';
+          c.fillText('Dia 12 o saldo fica abaixo', 1144, 586);
+          c.fillText('da reserva. Antecipar 3', 1144, 618);
+          c.fillText('recebíveis resolve.', 1144, 650);
+          c.restore();
+        }
       },
       // 4 — fundo (o HTML do site aparece por cima)
       (c) => {
@@ -1247,17 +1420,32 @@ class Component extends DCLogic {
       }
     ];
 
+    this._painters = painters;
+    return painters;
+  }
+
+  // ponytail: repinta UMA tela. O custo real aqui não é o canvas, é o upload da
+  // textura (1536x960 RGBA = 5,9 MB por vez), então quem chama decide a cadência.
+  // Nunca todo frame — ver o gate de 10fps no loop.
+  paintScreen(i, t) {
+    const painters = this.screenPainters();
+    if (!painters[i]) return;
     if (!this.screenCanvases) this.screenCanvases = painters.map(() => this.makeScreenCanvas());
     // os painters desenham sempre em 1536x960; o contexto é que encolhe no tier baixo
     const s = this.texScale || 1;
-    painters.forEach((p, i) => {
-      const ctx = this.screenCanvases[i].getContext('2d');
-      ctx.setTransform(s, 0, 0, s, 0, 0);
-      ctx.clearRect(0, 0, 1536, 960);
-      ctx.textBaseline = 'middle';
-      p(ctx);
-    });
-    if (this.screenTextures) this.screenTextures.forEach((t) => { t.needsUpdate = true; });
+    const ctx = this.screenCanvases[i].getContext('2d');
+    ctx.setTransform(s, 0, 0, s, 0, 0);
+    ctx.clearRect(0, 0, 1536, 960);
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'left';
+    painters[i](ctx, t || 0);
+    if (this.screenTextures && this.screenTextures[i]) this.screenTextures[i].needsUpdate = true;
+  }
+
+  paintScreens() {
+    const painters = this.screenPainters();
+    if (!this.screenCanvases) this.screenCanvases = painters.map(() => this.makeScreenCanvas());
+    painters.forEach((p, i) => this.paintScreen(i, 0));
   }
 
   async init() {
@@ -1296,6 +1484,9 @@ class Component extends DCLogic {
     const low = soft || memLow;
     this.lowTier = low;
     this.softRender = soft;
+    // simulação das telas: só onde sobra GPU e onde o visitante não pediu calma.
+    // É o primeiro item da escada de degradação — cai antes de qualquer pixel.
+    this.liveScreens = !low && !this.calmo;
     this.texScale = memLow ? 0.5 : 1;   // 1536x960 -> 768x480 por tela (-75% de VRAM)
     this.fpsCap = low ? 1000 / 30 : 0;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1728,6 +1919,9 @@ class Component extends DCLogic {
 
   // remonta a seção de destino: some tudo e reconstrói em cascata
   buildIn(el) {
+    // no modo CSS a entrada pertence à linha do tempo de scroll; mexer no
+    // opacity inline aqui brigaria com a animação e travaria o bloco invisível
+    if (this.cssReveal) return;
     const kids = Array.from(el.querySelectorAll('[data-reveal]'));
     const list = kids.length ? kids : [el];
     list.forEach((n) => {
@@ -2117,7 +2311,13 @@ class Component extends DCLogic {
     while (this.step <= alvo && this.step <= 4) {
       const s = this.step++;
       mexeu = true;
-      if (s === 0) this.renderer.setPixelRatio(Math.min(this.renderer.getPixelRatio(), 1));
+      if (s === 0) {
+        this.renderer.setPixelRatio(Math.min(this.renderer.getPixelRatio(), 1));
+        // a simulação sai antes do pixel: é o que menos falta faz e o que mais
+        // custa em banda de textura. Repinta o estado final para não congelar
+        // a tela no meio de uma entrada.
+        if (this.liveScreens) { this.liveScreens = false; this._simIdx = null; this.paintScreens(); }
+      }
       if (s === 1) { this.fpsCap = 1000 / 30; this.renderer.setPixelRatio(0.75); }
       if (s === 2) { this.fpsCap = 1000 / 24; this.renderer.setPixelRatio(0.55); }
       // blur em tempo real é o item mais caro da página quando não há GPU
@@ -2318,6 +2518,17 @@ class Component extends DCLogic {
     }
     const dist = Math.abs(f - near);
     const bright = (brightOverride != null ? brightOverride : Math.max(0.05, Math.min(1, 1 - dist * 2.5))) * (near === 4 ? 0.25 : 1);
+    // telas vivas: repinta SÓ a tela ativa, a 10fps, e só enquanto ela aparece.
+    // A 60fps isso seriam ~350 MB/s de upload de textura para um conteúdo que
+    // muda devagar; a 10fps são 59 MB/s e o olho não vê diferença.
+    // O relógio zera quando a seção troca, então cada tela sempre começa do zero.
+    if (this.liveScreens && idx >= 1 && idx <= 3) {
+      if (this._simIdx !== idx) { this._simIdx = idx; this._simT0 = agora; this._simLast = 0; }
+      if (bright > 0.06 && agora - (this._simLast || 0) >= 100) {
+        this._simLast = agora;
+        this.paintScreen(idx, (agora - this._simT0) / 1000);
+      }
+    }
     const onVid = this.videoTex && this.screenTextures[idx] === this.videoTex;
     if (this.punch) this.punch.value = onVid ? 1 : 0;
     this.screenMat.color.setScalar(bright * (onVid ? 1.12 : 1));

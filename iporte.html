@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,6 +25,34 @@
   summary { list-style: none; cursor: pointer; }
   details[open] [data-chev] { transform: rotate(45deg); }
   @keyframes druveFloat { 0%,100% { transform: translate3d(0,0,0) } 50% { transform: translate3d(0,-26px,0) } }
+  /* ---------- o outro lado do portal ----------
+     Mesmo nome de transição da placa do mergulho no index: o navegador
+     interpola a geometria de um documento para o outro e a tela do notebook
+     vira este hero. Sem suporte, é uma navegação normal. */
+  @view-transition { navigation: auto }
+  [data-portal] { view-transition-name: druve-portal }
+  ::view-transition-group(druve-portal) {
+    animation-duration: 560ms;
+    animation-timing-function: cubic-bezier(.16,.84,.28,1);
+  }
+  ::view-transition-old(root) { animation: druveSai 300ms cubic-bezier(.4,0,.9,.2) both }
+  ::view-transition-new(root) { animation: druveEntra 520ms cubic-bezier(.16,.84,.28,1) both }
+  @keyframes druveSai { to { opacity: 0; transform: scale(1.05) } }
+  @keyframes druveEntra { from { opacity: 0; transform: scale(1.025) } }
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none }
+    [data-reveal] { opacity: 1 !important; transform: none !important }
+  }
+  /* mobile: o header é uma linha só e a nav estoura a tela — o `overflow-x: clip`
+     da raiz cortava os links e o botão sem deixar rastro. Aqui ela quebra para a
+     segunda linha em vez de sumir. `white-space` precisa de !important porque o
+     valor original está em style inline. */
+  @media (max-width: 760px) {
+    /* quebrado em 3 linhas o header passa de 150px; grudado no topo isso come 19%
+       de uma tela de 812px. Aqui ele rola junto com o resto. */
+    header { position: static !important; flex-wrap: wrap; }
+    header nav { width: 100%; flex-wrap: wrap; white-space: normal !important; }
+  }
 </style>
 </helmet>
 
@@ -56,7 +84,7 @@
 
   <main style="position: relative; z-index: 2; display: flex; flex-direction: column; gap: clamp(72px, 11vh, 132px); padding: clamp(48px, 8vh, 96px) clamp(18px, 4vw, 56px) 0">
 
-    <section id="visao" data-screen-label="Hero" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(430px, 100%), 1fr)); gap: clamp(28px, 4vw, 60px); align-items: center; max-width: 1240px; width: 100%; margin: 0 auto">
+    <section id="visao" data-portal data-screen-label="Hero" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(430px, 100%), 1fr)); gap: clamp(28px, 4vw, 60px); align-items: center; max-width: 1240px; width: 100%; margin: 0 auto">
       <div style="display: flex; flex-direction: column; gap: 20px">
         <div style="display: flex; align-items: center; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: #7BA5EE; text-transform: uppercase"><span style="width: 22px; height: 1px; background: #2F62C4"></span>Sistema 03 — IPorte</div>
         <h1 style="margin: 0; font-size: clamp(34px, 4.6vw, 62px); line-height: 1.0; letter-spacing: -0.042em; font-weight: 500; text-wrap: balance">
